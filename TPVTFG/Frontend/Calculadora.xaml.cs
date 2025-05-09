@@ -33,7 +33,6 @@ namespace TPVTFG.Frontend
         {
             var content = (sender as Button).Content;
 
-            // Si es PackIcon, agarrar el Kind
             if (content is MaterialDesignThemes.Wpf.PackIcon icon)
             {
                 isIcono = true;
@@ -56,8 +55,11 @@ namespace TPVTFG.Frontend
                         Calculate();
                         return;
                     case "erase":
-                        input = input.Substring(0, input.Length - 1);
-                        UpdateDisplay();
+                        if (!string.IsNullOrEmpty(input))
+                        {
+                            input = input.Substring(0, input.Length - 1);
+                            UpdateDisplay();
+                        }
                         return;
                     case "comma":
                         input += ",";
@@ -95,9 +97,8 @@ namespace TPVTFG.Frontend
         {
             try
             {
-                // Usamos DataTable.Compute para evaluar (¡cuidado en apps serias!)
                 var result = new DataTable().Compute(input.Replace(",", "."), null);
-                input = Convert.ToString(result);
+                input = result.ToString();
                 borrar = true;
             }
             catch (Exception)

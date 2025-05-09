@@ -6,9 +6,7 @@ using TPVTFG.Backend.Servicios;
 
 namespace TPVTFG.Frontend
 {
-    /// <summary>
-    /// Lógica de interacción para Login.xaml
-    /// </summary>
+    
     public partial class Login : MetroWindow
     {
         private TpvbdContext contexto;

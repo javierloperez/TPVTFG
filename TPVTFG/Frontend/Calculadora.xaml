@@ -31,7 +31,7 @@
         <Button Background = "#00B2CA" Content="(" Grid.Row="1" Grid.Column="1"
     Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="Button_Click" Height="60" Margin="10 0 10 0" FontSize="15" x:Name="btnAbrirP"/>
         <Button Background = "#00B2CA" Content=")" Grid.Row="1" Grid.Column="2"
-    Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="Button_Click" Height="60" Margin="10 0 10 0" FontSize="15" x:Name="btnCerrarP"/>
+    Style="{StaticResource MaterialDesignFlatButton}" Click="Button_Click" Height="60" Margin="10 0 10 0" FontSize="15" x:Name="btnCerrarP"/>
         <Button Background = "#EC3E7F" Grid.Row="1" Grid.Column="3"
     Style="{StaticResource MaterialDesignFlatMidBgButton}" Click="Button_Click" Height="60" Margin="10 0 10 0" FontSize="15" x:Name="btnDividir">
             <Button.Content>
