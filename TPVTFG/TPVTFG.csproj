@@ -11,20 +11,11 @@
   <ItemGroup>
     <None Remove="Iconos\Analgesicos.png" />
     <None Remove="Iconos\Calculadora.png" />
-    <None Remove="Iconos\Categorias\Antialergicos.png" />
-    <None Remove="Iconos\Categorias\Antiinflamatorios.png" />
-    <None Remove="Iconos\Categorias\Antisepticos.png" />
-    <None Remove="Iconos\Categorias\Cremas.png" />
-    <None Remove="Iconos\Categorias\CuidadoInfantil.png" />
-    <None Remove="Iconos\Categorias\HigienePersonal.png" />
-    <None Remove="Iconos\Categorias\Jarabes.png" />
-    <None Remove="Iconos\Categorias\SaludSexual.png" />
-    <None Remove="Iconos\Categorias\Suplementos.png" />
-    <None Remove="Iconos\Categorias\Vitaminas.png" />
     <None Remove="Iconos\PngFondo.jpg" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
     <PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
     <PackageReference Include="microsoft.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="microsoft.EntityFrameworkCore.Design" Version="8.0.10">
@@ -37,19 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Iconos\Categorias\Analgesicos.png" />
     <Resource Include="Iconos\Calculadora.png" />
-    <Resource Include="Iconos\Categorias\Antialergicos.png" />
-    <Resource Include="Iconos\Categorias\Antibioticos.png" />
-    <Resource Include="Iconos\Categorias\Antiinflamatorios.png" />
-    <Resource Include="Iconos\Categorias\Antisepticos.png" />
-    <Resource Include="Iconos\Categorias\Cremas.png" />
-    <Resource Include="Iconos\Categorias\CuidadoInfantil.png" />
-    <Resource Include="Iconos\Categorias\HigienePersonal.png" />
-    <Resource Include="Iconos\Categorias\Jarabes.png" />
-    <Resource Include="Iconos\Categorias\SaludSexual.png" />
-    <Resource Include="Iconos\Categorias\Suplementos.png" />
-    <Resource Include="Iconos\Categorias\Vitaminas.png" />
     <Resource Include="Iconos\PngFondo.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

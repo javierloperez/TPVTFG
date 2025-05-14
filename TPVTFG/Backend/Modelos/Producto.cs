@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using TPVTFG.MVVM.Base;
 
 namespace TPVTFG.Backend.Modelos;
 
 [Table("productos")]
 [Index("Categoria", Name = "CategoriaID_idx")]
 [Index("OfertaId", Name = "OfertaID_idx")]
-public partial class Producto
+public partial class Producto : PropertyChangedDataError
 {
     [Key]
     [Column("ID")]
@@ -30,6 +31,10 @@ public partial class Producto
 
     [Column("OfertaID")]
     public int? OfertaId { get; set; }
+
+    [Column("RutaLogo")]
+    [StringLength(200)]
+    public string RutaImagen { get; set; } = null!;
 
     [ForeignKey("Categoria")]
     [InverseProperty("Productos")]

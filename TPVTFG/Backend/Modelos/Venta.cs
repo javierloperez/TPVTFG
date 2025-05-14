@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace TPVTFG.Backend.Modelos;
 
 [Table("ventas")]
-[Index("ClienteId", Name = "ClientesID_idx")]
+[Index("ClienteId", Name = "ClienteID")]
 [Index("EmpleadoId", Name = "EmpleadosID")]
 public partial class Venta
 {
@@ -33,7 +33,7 @@ public partial class Venta
     public string? Mensaje { get; set; }
 
     [Column("ClienteID")]
-    public int? ClienteId { get; set; }
+    public string? ClienteId { get; set; }
 
     [ForeignKey("ClienteId")]
     [InverseProperty("Venta")]

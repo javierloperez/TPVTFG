@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using MaterialDesignThemes.Wpf;
 using TPVTFG.Backend.Modelos;
 using TPVTFG.Backend.Servicios;
-using TPVTFG.MVVM.Base;
 using TPVTFG.Frontend;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using TPVTFG.MVVM.Base;
 
 namespace TPVTFG.MVVM
 {
-    public class MVCategorias : MVBaseCRUD<Categoria>
+    public class MVCategorias : MVBaseCRUD<Producto>
     {
         TpvbdContext _contexto;
         Categoria _categoria;
@@ -28,24 +22,23 @@ namespace TPVTFG.MVVM
         TextBlock _precioTotal;
         int it = 0;
         decimal? precioFinal = 0;
-        string[] listaIconos = new string[]
-{
-    "Analgesicos",
-    "Jarabes",
-    "Vitaminas",
-    "Suplementos",
-    "Cremas",
-    "Antibioticos",
-    "Antialergicos",
-    "Antiinflamatorios",
-    "Antisepticos",
-    "HigienePersonal",
-    "SaludSexual",
-    "CuidadoInfantil"
-};
+        int _cantidadItem;
+
+
+
+
+
 
         public IEnumerable<Categoria> _listaCategorias { get { return Task.Run(_categoriaServicio.GetAllAsync).Result; } }
         public IEnumerable<Producto> _listaProductos { get { return Task.Run(_productoServicio.GetAllAsync).Result; } }
+
+        public bool guarda { get { return Task.Run(() => Add(_crearProducto)).Result; } }
+
+        public Producto _crearProducto
+        {
+            get { return _producto; }
+            set { _producto = value; OnPropertyChanged(nameof(_crearProducto)); }
+        }
         public MVCategorias(TpvbdContext contexto)
         {
             _contexto = contexto;
@@ -62,7 +55,7 @@ namespace TPVTFG.MVVM
             _precioTotal = precioTotal;
             Separator separador = new Separator();
 
-            servicio = _categoriaServicio;
+            servicio = _productoServicio;
 
         }
 
@@ -80,7 +73,7 @@ namespace TPVTFG.MVVM
                     Background = (Brush)new BrushConverter().ConvertFromString("#f9f1dc"),
                     Content = new Image
                     {
-                        Source = new BitmapImage(new Uri("/Iconos/Categorias/" + listaIconos[it] + ".png", UriKind.RelativeOrAbsolute)),
+                        Source = new BitmapImage(new Uri(item.RutaImagen, UriKind.RelativeOrAbsolute)),
 
                     },
                     Tag = item
@@ -96,19 +89,23 @@ namespace TPVTFG.MVVM
 
         private void ListarProductos_Click(object sender, RoutedEventArgs e)
         {
-
+            string[] iconos = [];
             if (sender is Button btn && btn.Tag is Categoria categoria)
             {
+
+
                 IEnumerable<Producto> productosFiltrados = _listaProductos.Where(p => p.Categoria == categoria.Id);
 
-                ListarProductosCategoria(productosFiltrados);
+                ListarProductosCategoria(productosFiltrados, iconos);
             }
 
         }
 
-        private void ListarProductosCategoria(IEnumerable<Producto> productosFiltrados)
+        private void ListarProductosCategoria(IEnumerable<Producto> productosFiltrados, string[] iconos)
         {
+            int i = 0;
             _panelMedio.Children.Clear();
+
             foreach (var item in productosFiltrados)
             {
 
@@ -118,25 +115,33 @@ namespace TPVTFG.MVVM
                     Height = 140,
                     Margin = new Thickness(5),
                     BorderThickness = new Thickness(0),
-                    Background = Brushes.LightBlue,
-                    Content = item.Descripcion,
+                    Background = (Brush)new BrushConverter().ConvertFromString("#f9f1dc"),
+                    Content = new Image
+                    {
+                        Source = new BitmapImage(new Uri(item.RutaImagen, UriKind.RelativeOrAbsolute)),
+
+                    },
                     Tag = item
                 };
-
-                btn.Click += SeleecionarCantidad;
+                i++;
+                btn.Click += (s, e) =>
+                {
+                    _cantidadItem = 1;
+                    SeleccionarCantidad(s,e);
+                };
                 _panelMedio.Children.Add(btn);
             }
         }
 
-        private void SeleecionarCantidad(object sender, RoutedEventArgs e)
+        private void SeleccionarCantidad(object sender, RoutedEventArgs e)
         {
-            VentanaCantidad cantidad = new VentanaCantidad(_contexto, sender, this);
-            cantidad.Show();
+
+            VentanaCantidad cantidad = new VentanaCantidad(_contexto, sender, this, _cantidadItem);
+            cantidad.ShowDialog();
         }
 
-        public async Task AnyadirTicket(Decimal? cantidad, object sender)
+        public async Task AnyadirTicket(int cantidad, object sender)
         {
-
 
             if (sender is Button btn && btn.Tag is Producto producto)
             {
@@ -144,23 +149,42 @@ namespace TPVTFG.MVVM
                 Grid fila = new Grid();
                 ColumnDefinition izquierda = new ColumnDefinition();
                 ColumnDefinition derecha = new ColumnDefinition();
+                ColumnDefinition extraBtn = new ColumnDefinition();
 
-                izquierda.Width = new GridLength(3, GridUnitType.Star);
-                derecha.Width = new GridLength(1, GridUnitType.Star);
+                izquierda.Width = new GridLength(2.8, GridUnitType.Star);
+                derecha.Width = new GridLength(1.2, GridUnitType.Star);
+                extraBtn.Width = new GridLength(0.9, GridUnitType.Star);
 
                 TextBlock nombre = new TextBlock()
                 {
+                    Background = Brushes.Transparent,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Foreground = Brushes.Black,
+                    FontWeight = FontWeights.Normal,
+                    VerticalAlignment = VerticalAlignment.Center,
                     Text = producto.Descripcion,
-                    TextWrapping = TextWrapping.Wrap,
-                    FontSize = 15
+                    TextTrimming = TextTrimming.CharacterEllipsis,
+                    FontSize = 15,
+
+
                 };
 
-
-                TextBlock cant = new TextBlock()
+                Button cant = new Button()
                 {
-                    Text = cantidad.ToString(),
+                    BorderBrush = Brushes.Transparent,
+                    Background = Brushes.Transparent,
+                    Content = new TextBlock()
+                    {
+                        Text = cantidad.ToString(),
+                        Foreground = Brushes.Black,
+                        FontWeight = FontWeights.Normal
+                    },
                     FontSize = 15,
-                    HorizontalAlignment = HorizontalAlignment.Right
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Tag = btn.Tag
+
                 };
 
                 decimal? precioFinal = producto.Precio * cantidad;
@@ -168,18 +192,50 @@ namespace TPVTFG.MVVM
                 {
                     Text = precioFinal.ToString() + "€",
                     FontSize = 15,
-                    HorizontalAlignment = HorizontalAlignment.Right
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center,
                 };
 
+                Button btnEliminar = new Button
+                {
 
+                    Background = Brushes.Transparent,
+                    BorderBrush = Brushes.Transparent,
+                    ToolTip = "Eliminar",
+                    Content = new PackIcon
+                    {
+                        Kind = PackIconKind.CloseCircle,
+                        Width = 24,
+                        Height = 24,
+                        Foreground = Brushes.Red
+                    },
+                    Tag = btn.Tag,
+                };
+
+                btnEliminar.Click += (sender, e) =>
+                {
+                    _panelTicket.Children.Remove(fila);
+                    ModificarTotal(precioFinal * -1);
+                };
+
+                cant.Click += SeleccionarCantidad;
+                cant.Click += (sender, e) =>
+                {
+                    
+                    _panelTicket.Children.Remove(fila);
+                    ModificarTotal(precioFinal * -1);
+                };
                 fila.ColumnDefinitions.Add(izquierda);
                 fila.ColumnDefinitions.Add(derecha);
+                fila.ColumnDefinitions.Add(extraBtn);
                 fila.Children.Add(nombre);
                 fila.Children.Add(precio);
                 fila.Children.Add(cant);
+                fila.Children.Add(btnEliminar);
                 Grid.SetColumn(nombre, 0);
                 Grid.SetColumn(cant, 0);
                 Grid.SetColumn(precio, 1);
+                Grid.SetColumn(btnEliminar, 2);
                 _panelTicket.Children.Add(fila);
 
                 ModificarTotal(precioFinal);
@@ -190,7 +246,7 @@ namespace TPVTFG.MVVM
         private void ModificarTotal(decimal? precio)
         {
             precioFinal += precio;
-            _precioTotal.Text = precioFinal.ToString()+"€";
+            _precioTotal.Text = precioFinal.ToString() + "€";
         }
     }
 }

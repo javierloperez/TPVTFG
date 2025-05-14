@@ -11,7 +11,7 @@ public partial class Cliente
 {
     [Key]
     [Column("DNI")]
-    public int Dni { get; set; }
+    public string Dni { get; set; }
 
     [StringLength(50)]
     public string Nombre { get; set; } = null!;

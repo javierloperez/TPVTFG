@@ -1,0 +1,137 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Windows.Threading;
+using MahApps.Metro.Controls;
+using TPVTFG.Backend.Modelos;
+using TPVTFG.Frontend.Dialogos;
+using TPVTFG.MVVM;
+
+namespace TPVTFG.Frontend
+{
+    /// <summary>
+    /// Lógica de interacción para VentanaCantidad.xaml
+    /// </summary>
+    public partial class VentanaCantidad : MetroWindow
+    {
+        private DispatcherTimer _holdTimer;
+        private DispatcherTimer _repeatTimer;
+        private bool _isIncrementing = false;
+
+        private int _cantidad = 1;
+        private int _cantidadMax;
+        MVCategorias _mvCategorias;
+        TpvbdContext _contexto;
+        object _sender;
+
+        public VentanaCantidad(TpvbdContext contexto, object sender, MVCategorias mvCategorias, int cantidad)
+        {
+            InitializeComponent();
+            _contexto = contexto;
+            _mvCategorias = mvCategorias;
+            _sender = sender;
+            _cantidad = cantidad;
+            txtCantidad.Text = _cantidad.ToString();
+            if (sender is Button btn && btn.Tag is Producto producto)
+            {
+                _cantidadMax = producto.Cantidad;
+            }
+            if (sender is Button cant && cant.Tag is Producto producto1)
+            {
+                _cantidadMax = producto1.Cantidad;
+            }
+
+
+            _holdTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
+            _holdTimer.Tick += HoldTimer_Tick;
+
+            _repeatTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+            _repeatTimer.Tick += RepeatTimer_Tick;
+
+            btnSumar.PreviewMouseLeftButtonDown += (s, e) => StartHold(true);
+            btnSumar.PreviewMouseLeftButtonUp += (s, e) => StopHold();
+            btnSumar.Click += (s, e) => Increment();
+
+            btnRestar.PreviewMouseLeftButtonDown += (s, e) => StartHold(false);
+            btnRestar.PreviewMouseLeftButtonUp += (s, e) => StopHold();
+            btnRestar.Click += (s, e) => Decrement();
+        }
+
+        private void StartHold(bool isIncrement)
+        {
+            _isIncrementing = isIncrement;
+            _holdTimer.Start();
+        }
+
+        private void StopHold()
+        {
+            _holdTimer.Stop();
+            _repeatTimer.Stop();
+        }
+        private void HoldTimer_Tick(object sender, EventArgs e)
+        {
+            _holdTimer.Stop();
+            _repeatTimer.Start();
+        }
+
+        private void RepeatTimer_Tick(object sender, EventArgs e)
+        {
+            if (_isIncrementing)
+            {
+                Increment();
+            }
+            else
+            {
+                Decrement();
+            }
+        }
+
+        private void Increment()
+        {
+            if (_cantidad < _cantidadMax)
+            {
+                _cantidad++;
+                txtCantidad.Text = _cantidad.ToString();
+            }
+        }
+
+        private void Decrement()
+        {
+            if (_cantidad > 1)
+            {
+                _cantidad--;
+                txtCantidad.Text = _cantidad.ToString();
+            }
+        }
+
+        private void btnGuardar_Click(object sender, RoutedEventArgs e)
+        {
+            _mvCategorias.AnyadirTicket(_cantidad, _sender);
+            this.Close();
+        }
+
+        private void btnCancelar_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void txtCantidad_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TecladoNum teclado = new TecladoNum(txtCantidad, _cantidadMax);
+            teclado.ShowDialog();
+            _cantidad = int.Parse(txtCantidad.Text);
+        }
+
+
+    }
+}
