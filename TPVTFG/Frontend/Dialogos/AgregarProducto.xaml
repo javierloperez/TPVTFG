@@ -54,7 +54,7 @@
 
         <TextBox Grid.Row="4" mat:HintAssist.Hint="Ubicación *" Text="{Binding _crearProducto.Ubicacion, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" x:Name="tbUbicacion" FontSize="20" FontWeight="Bold" MaxLength="50" Width="360" Height="60"/>
 
-        <Button Grid.Column="1" Grid.Row="4" x:Name="btnCrearOferta" Content="Crear oferta" Style="{StaticResource MaterialDesignOutlinedButton}" Width="150" Height="50" Click="btnCrearOferta_Click" VerticalAlignment="Center" />
+        <ComboBox Grid.Column="1" Grid.Row="4" SelectedItem="{Binding _crearProducto.Oferta, ValidatesOnDataErrors=True,NotifyOnValidationError=True}"  ItemsSource="{Binding _listaOfertas}" DisplayMemberPath="Descripcion" mat:HintAssist.Hint="Selecciona una oferta " x:Name="cbOferta" FontSize="20" Width="360" Padding="0 0 0 5" Height="60" />
 
         <TextBox Grid.Row="5" Grid.ColumnSpan="2" mat:HintAssist.Hint="Ruta de la imagen *" Text="{Binding _crearProducto.RutaImagen, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" x:Name="tbImagen" FontSize="20" FontWeight="Bold" MaxLength="200" HorizontalAlignment="Center" Width="450" Height="60"/>
         

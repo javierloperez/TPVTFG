@@ -3,7 +3,10 @@ using System.Windows;
 using MahApps.Metro.Controls;
 using MaterialDesignThemes.Wpf;
 using TPVTFG.Backend.Modelos;
+using TPVTFG.Frontend.ControlUser;
+using TPVTFG.Frontend.Dialogos;
 using TPVTFG.MVVM;
+using TPVTFG.MVVM.Base;
 
 namespace TPVTFG.Frontend
 {
@@ -14,7 +17,10 @@ namespace TPVTFG.Frontend
     {
         private TpvbdContext _contexto;
         private Usuario usuario;
-        private MVCategorias _mvCategorias;
+        private MVProducto _mvCategorias;
+        private MVOfertas _mvOfertas;
+        private MVCategoria _mvCategoria;
+        private MVClientes _mvClientes;
         public MainWindow(TpvbdContext contexto)
         {
             InitializeComponent();
@@ -27,8 +33,17 @@ namespace TPVTFG.Frontend
 
         public async Task Inicializa()
         {
-            _mvCategorias = new MVCategorias(_contexto);
+            _mvCategorias = new MVProducto(_contexto);
             await _mvCategorias.Inicializa(panelMedio, panelTicket, precioTotal);
+
+            _mvOfertas = new MVOfertas(_contexto);
+            await _mvOfertas.Inicializa();
+
+            _mvCategoria = new MVCategoria(_contexto);
+            await _mvCategoria.Inicializa();
+
+            _mvClientes = new MVClientes(_contexto);
+            await _mvClientes.Inicializa();
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
@@ -52,14 +67,15 @@ namespace TPVTFG.Frontend
 
         private void btnStock_Click(object sender, RoutedEventArgs e)
         {
-            StockProductos stockProductos = new StockProductos(_mvCategorias);
+            StockProductos stockProductos = new StockProductos(_mvCategorias, _mvOfertas,_mvCategoria);
             stockProductos.ShowDialog();
 
         }
 
-        private void borrarProducto_Click(object sender, RoutedEventArgs e)
+        private void btnClientes_Click(object sender, RoutedEventArgs e)
         {
-
+            ListaClientes lc = new ListaClientes(_mvClientes);
+            lc.ShowDialog();
         }
     }
 }

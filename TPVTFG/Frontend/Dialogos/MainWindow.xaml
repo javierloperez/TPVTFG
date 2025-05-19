@@ -13,11 +13,15 @@
         <Grid Background="#00B2CA" DockPanel.Dock="Top" Height="85">
             <Button x:Name="cerrarSesion" Foreground="White" Click="cerrarSesion_Click" Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="CornflowerBlue" HorizontalAlignment="Right" Margin="0 0 10 0" FontSize="30" Height="76">
                 <Button.Content>
-                    <mat:PackIcon Kind="Logout"/>
+                    <mat:PackIcon Kind="Logout" Width="50" Height="50" Cursor=""/>
                 </Button.Content>
             </Button>
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="btnStock" Content="Stock" Style="{StaticResource MaterialDesignOutlinedButton}" Background="Transparent" mat:ButtonAssist.CornerRadius="15" Height="50" HorizontalAlignment="Left" FontSize="20" Foreground="White" Click="btnStock_Click" BorderBrush="Transparent"/>
 
-            <Button x:Name="btnStock" Content="Stock" Style="{StaticResource MaterialDesignOutlinedButton}" Background="Transparent" mat:ButtonAssist.CornerRadius="15" Height="50" HorizontalAlignment="Left" FontSize="20" Foreground="White" Click="btnStock_Click" BorderBrush="Transparent"/>
+                <Button x:Name="btnClientes" Content="Clientes" Style="{StaticResource MaterialDesignOutlinedButton}" Background="Transparent" mat:ButtonAssist.CornerRadius="15" Height="50" HorizontalAlignment="Left" FontSize="20" Foreground="White" Click="btnClientes_Click" BorderBrush="Transparent"/>
+
+            </StackPanel>
         </Grid>
         <Grid x:Name="panelPrincipal" >
 

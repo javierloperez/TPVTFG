@@ -27,14 +27,16 @@ namespace TPVTFG.Frontend
         private DispatcherTimer _holdTimer;
         private DispatcherTimer _repeatTimer;
         private bool _isIncrementing = false;
+        public int CantidadSeleccionada => _cantidad;
+        public bool _modificar { get; set; } = false;
 
         private int _cantidad = 1;
         private int _cantidadMax;
-        MVCategorias _mvCategorias;
+        MVProducto _mvCategorias;
         TpvbdContext _contexto;
         object _sender;
 
-        public VentanaCantidad(TpvbdContext contexto, object sender, MVCategorias mvCategorias, int cantidad)
+        public VentanaCantidad(TpvbdContext contexto, object sender, MVProducto mvCategorias, int cantidad)
         {
             InitializeComponent();
             _contexto = contexto;
@@ -44,11 +46,11 @@ namespace TPVTFG.Frontend
             txtCantidad.Text = _cantidad.ToString();
             if (sender is Button btn && btn.Tag is Producto producto)
             {
-                _cantidadMax = producto.Cantidad;
+                _cantidadMax = _mvCategorias.ObtenerStockDisponible(producto.Id, producto.Cantidad);
             }
             if (sender is Button cant && cant.Tag is Producto producto1)
             {
-                _cantidadMax = producto1.Cantidad;
+                _cantidadMax = _mvCategorias.ObtenerStockDisponible(producto1.Id, producto1.Cantidad);
             }
 
 
@@ -116,12 +118,20 @@ namespace TPVTFG.Frontend
 
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
+            if (!_modificar)
+            {
             _mvCategorias.AnyadirTicket(_cantidad, _sender);
-            this.Close();
+            }
+            else
+            {
+                _mvCategorias._actualizarCantidad = true;
+            }
+                this.Close();
         }
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
+            _mvCategorias._actualizarCantidad = false;
             this.Close();
         }
 

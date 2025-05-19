@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using TPVTFG.Frontend.ControlUser;
 using TPVTFG.MVVM;
+using TPVTFG.MVVM.Base;
 
 namespace TPVTFG
 {
@@ -9,10 +10,10 @@ namespace TPVTFG
     /// </summary>
     public partial class StockProductos : MetroWindow
     {
-        public StockProductos(MVCategorias mv)
+        public StockProductos(MVProducto mv, MVOfertas mvOfertas,MVCategoria mvCategoria)
         {
             InitializeComponent();
-            ControlStock controlStock = new ControlStock(mv);
+            ControlStock controlStock = new ControlStock(mv, mvOfertas,mvCategoria);
             panelPrincipal.Children.Clear();
             panelPrincipal.Children.Add(controlStock);
         }

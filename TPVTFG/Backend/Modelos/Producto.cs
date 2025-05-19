@@ -36,6 +36,9 @@ public partial class Producto : PropertyChangedDataError
     [StringLength(200)]
     public string RutaImagen { get; set; } = null!;
 
+    [StringLength(2)]
+    public string Activado { get; set; }
+
     [ForeignKey("Categoria")]
     [InverseProperty("Productos")]
     public virtual Categoria? CategoriaNavigation { get; set; }

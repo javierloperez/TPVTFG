@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Net.NetworkInformation;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -10,36 +11,43 @@ using TPVTFG.MVVM.Base;
 
 namespace TPVTFG.MVVM
 {
-    public class MVCategorias : MVBaseCRUD<Producto>
+    public class MVProducto : MVBaseCRUD<Producto>
     {
         TpvbdContext _contexto;
         Categoria _categoria;
         CategoriaServicio _categoriaServicio;
         Producto _producto;
         ProductoServicio _productoServicio;
+        Oferta _oferta;
+        OfertaServicio _ofertaServicio;
         WrapPanel _panelMedio;
         StackPanel _panelTicket;
         TextBlock _precioTotal;
         int it = 0;
         decimal? precioFinal = 0;
         int _cantidadItem;
-
-
-
-
-
+        private Dictionary<int, int> _stockTemporal = new Dictionary<int, int>();
+        public bool _actualizarCantidad { get; set; }
 
         public IEnumerable<Categoria> _listaCategorias { get { return Task.Run(_categoriaServicio.GetAllAsync).Result; } }
-        public IEnumerable<Producto> _listaProductos { get { return Task.Run(_productoServicio.GetAllAsync).Result; } }
+        public IEnumerable<Producto> _listaProductos { get { return Task.Run(_productoServicio.GetAllAsync).Result.Where(p => p.Activado.ToLower().Equals("si")); } }
+        public IEnumerable<Oferta> _listaOfertas { get { return Task.Run(_ofertaServicio.GetAllAsync).Result; } }
+
+
+        public Producto Clonar { get { return (Producto)_producto.Clone(); } }
 
         public bool guarda { get { return Task.Run(() => Add(_crearProducto)).Result; } }
+        public bool borrar { get { return Task.Run(() => Delete(_crearProducto)).Result; } }
+        public bool actualizar { get { return Task.Run(() => Update(_crearProducto)).Result; } }
 
         public Producto _crearProducto
         {
             get { return _producto; }
             set { _producto = value; OnPropertyChanged(nameof(_crearProducto)); }
         }
-        public MVCategorias(TpvbdContext contexto)
+
+
+        public MVProducto(TpvbdContext contexto)
         {
             _contexto = contexto;
         }
@@ -50,13 +58,14 @@ namespace TPVTFG.MVVM
             _categoriaServicio = new CategoriaServicio(_contexto);
             _producto = new Producto();
             _productoServicio = new ProductoServicio(_contexto);
+            _oferta = new Oferta();
+            _ofertaServicio = new OfertaServicio(_contexto);
             _panelMedio = panelMedio;
             _panelTicket = panelTicket;
             _precioTotal = precioTotal;
-            Separator separador = new Separator();
 
             servicio = _productoServicio;
-
+            
         }
 
         public void ListadoCategorias(StackPanel panelCategorias)
@@ -74,11 +83,9 @@ namespace TPVTFG.MVVM
                     Content = new Image
                     {
                         Source = new BitmapImage(new Uri(item.RutaImagen, UriKind.RelativeOrAbsolute)),
-
                     },
                     Tag = item
                 };
-
 
                 btn.Click += ListarProductos_Click;
                 it++;
@@ -92,8 +99,6 @@ namespace TPVTFG.MVVM
             string[] iconos = [];
             if (sender is Button btn && btn.Tag is Categoria categoria)
             {
-
-
                 IEnumerable<Producto> productosFiltrados = _listaProductos.Where(p => p.Categoria == categoria.Id);
 
                 ListarProductosCategoria(productosFiltrados, iconos);
@@ -108,6 +113,10 @@ namespace TPVTFG.MVVM
 
             foreach (var item in productosFiltrados)
             {
+                if (item.Activado.ToLower().Equals("no"))
+                {
+                    continue;
+                }
 
                 Button btn = new Button
                 {
@@ -124,10 +133,11 @@ namespace TPVTFG.MVVM
                     Tag = item
                 };
                 i++;
+               
                 btn.Click += (s, e) =>
                 {
                     _cantidadItem = 1;
-                    SeleccionarCantidad(s,e);
+                    SeleccionarCantidad(s, e);
                 };
                 _panelMedio.Children.Add(btn);
             }
@@ -214,17 +224,49 @@ namespace TPVTFG.MVVM
 
                 btnEliminar.Click += (sender, e) =>
                 {
-                    _panelTicket.Children.Remove(fila);
-                    ModificarTotal(precioFinal * -1);
-                };
-
-                cant.Click += SeleccionarCantidad;
-                cant.Click += (sender, e) =>
-                {
                     
                     _panelTicket.Children.Remove(fila);
+                    _stockTemporal.Remove(producto.Id);
                     ModificarTotal(precioFinal * -1);
+                    btn.IsEnabled = true;
                 };
+
+                cant.Click += async (sender, e) =>
+                {
+                    if (sender is Button btnClick && btnClick.Tag is Producto producto)
+                    {
+                        TextBlock txtCant = (TextBlock)btnClick.Content;
+                        int cantidadAnterior = int.Parse(txtCant.Text);
+
+                        // Mostrar ventana para seleccionar nueva cantidad
+                        VentanaCantidad ventanaCantidad = new VentanaCantidad(_contexto, btnClick, this, cantidadAnterior);
+                        ventanaCantidad._modificar = true;
+                        ventanaCantidad.ShowDialog();
+
+                        if (_actualizarCantidad)
+                        {
+                            int nuevaCantidad = ventanaCantidad.CantidadSeleccionada;
+                            if (nuevaCantidad != cantidadAnterior)
+                            {
+                                _stockTemporal.Remove(producto.Id);
+                                txtCant.Text = nuevaCantidad.ToString();
+
+                                decimal? precioAnterior = producto.Precio * cantidadAnterior;
+                                decimal? precioNuevo = producto.Precio * nuevaCantidad;
+                                precio.Text = precioNuevo.ToString() + "€";
+
+                                RegistrarStockTemporal(producto.Id, nuevaCantidad);
+                                ModificarTotal(precioNuevo - precioAnterior);
+                                if(nuevaCantidad < cantidadAnterior)
+                                {
+                                    btn.IsEnabled = true;
+                                }
+
+                            }
+                        }
+                    }
+                };
+
                 fila.ColumnDefinitions.Add(izquierda);
                 fila.ColumnDefinitions.Add(derecha);
                 fila.ColumnDefinitions.Add(extraBtn);
@@ -237,10 +279,36 @@ namespace TPVTFG.MVVM
                 Grid.SetColumn(precio, 1);
                 Grid.SetColumn(btnEliminar, 2);
                 _panelTicket.Children.Add(fila);
-
+                RegistrarStockTemporal(producto.Id, cantidad);
                 ModificarTotal(precioFinal);
+
+                if((producto.Cantidad - _stockTemporal[producto.Id]) == 0)
+                {
+                    btn.IsEnabled = false;
+                }
+                else
+                {
+                    btn.IsEnabled = true;
+                }
+
             }
 
+        }
+
+        public int ObtenerStockDisponible(int idProducto, int stockOriginal)
+        {
+            if (_stockTemporal.ContainsKey(idProducto))
+                return stockOriginal - _stockTemporal[idProducto];
+
+            return stockOriginal;
+        }
+
+        public void RegistrarStockTemporal(int idProducto, int cantidad)
+        {
+            if (_stockTemporal.ContainsKey(idProducto))
+                _stockTemporal[idProducto] += cantidad;
+            else
+                _stockTemporal[idProducto] = cantidad;
         }
 
         private void ModificarTotal(decimal? precio)

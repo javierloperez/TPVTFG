@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using TPVTFG.MVVM.Base;
 
 namespace TPVTFG.Backend.Modelos;
 
 [Table("ofertas")]
-public partial class Oferta
+public partial class Oferta : PropertyChangedDataError
 {
     [Key]
     [Column("ID")]
