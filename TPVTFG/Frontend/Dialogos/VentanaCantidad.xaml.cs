@@ -35,6 +35,8 @@ namespace TPVTFG.Frontend
         MVProducto _mvCategorias;
         TpvbdContext _contexto;
         object _sender;
+        private string _tipoUso = string.Empty;
+        private MainWindow _ventana;
 
         public VentanaCantidad(TpvbdContext contexto, object sender, MVProducto mvCategorias, int cantidad)
         {
@@ -69,6 +71,29 @@ namespace TPVTFG.Frontend
             btnRestar.Click += (s, e) => Decrement();
         }
 
+        public VentanaCantidad(TpvbdContext contexto, string tipo, MainWindow ventana)
+        {
+            InitializeComponent();
+            _tipoUso = tipo;
+            _ventana = ventana;
+            _contexto = contexto;
+            _cantidadMax = 9999;
+            txtCantidad.Text = _cantidad.ToString();
+
+            _holdTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
+            _holdTimer.Tick += HoldTimer_Tick;
+
+            _repeatTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+            _repeatTimer.Tick += RepeatTimer_Tick;
+
+            btnSumar.PreviewMouseLeftButtonDown += (s, e) => StartHold(true);
+            btnSumar.PreviewMouseLeftButtonUp += (s, e) => StopHold();
+            btnSumar.Click += (s, e) => Increment();
+
+            btnRestar.PreviewMouseLeftButtonDown += (s, e) => StartHold(false);
+            btnRestar.PreviewMouseLeftButtonUp += (s, e) => StopHold();
+            btnRestar.Click += (s, e) => Decrement();
+        }
         private void StartHold(bool isIncrement)
         {
             _isIncrementing = isIncrement;
@@ -118,20 +143,42 @@ namespace TPVTFG.Frontend
 
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            if (!_modificar)
+            if (_tipoUso.Equals("normal"))
             {
-            _mvCategorias.AnyadirTicket(_cantidad, _sender);
+                try
+                {
+                    _ventana.totalADevolver.Text = (_cantidad - decimal.Parse(_ventana.precioConIva.Text.TrimEnd('€'))).ToString("0.00") + "€";
+                    _ventana.cantidadRecibida.Text = _cantidad.ToString("0.00") + "€";
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Aun no hay un ticket con precio");
+                }
+
+            }
+            else if (_tipoUso.Equals("iva")){
+                _ventana.porcentajeIva.Text = _cantidad.ToString();
             }
             else
             {
-                _mvCategorias._actualizarCantidad = true;
+                if (!_modificar)
+                {
+                    _mvCategorias.AnyadirTicket(_cantidad, _sender);
+                }
+                else
+                {
+                    _mvCategorias._actualizarCantidad = true;
+                }
             }
-                this.Close();
+            this.Close();
         }
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
-            _mvCategorias._actualizarCantidad = false;
+            if (string.IsNullOrEmpty(_tipoUso))
+            {
+                _mvCategorias._actualizarCantidad = false;
+            }
             this.Close();
         }
 

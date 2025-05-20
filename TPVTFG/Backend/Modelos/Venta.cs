@@ -29,9 +29,6 @@ public partial class Venta
     [Precision(10)]
     public decimal Total { get; set; }
 
-    [Column(TypeName = "text")]
-    public string? Mensaje { get; set; }
-
     [Column("ClienteID")]
     public string? ClienteId { get; set; }
 

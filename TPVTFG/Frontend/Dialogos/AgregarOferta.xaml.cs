@@ -34,10 +34,12 @@ namespace TPVTFG.Frontend.Dialogos
             _mvOfertas.btnGuardar = btnGuardar;
             dpFechaFin.SelectedDate = DateTime.Today;
             dpFechaInicio.SelectedDate = DateTime.Today;
+
         }
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
+            _mvOfertas._crearOferta = new Oferta();
             this.Close();
         }
 
@@ -50,6 +52,7 @@ namespace TPVTFG.Frontend.Dialogos
                 {
                     await this.ShowMessageAsync("Gestión crear oferta", "La oferta se ha guardado correctamente");
                     DialogResult = true;
+                    _mvOfertas._crearOferta = new Oferta();
 
                 }
                 else

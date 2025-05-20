@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using TPVTFG.Backend.Modelos;
 using TPVTFG.MVVM;
 
 namespace TPVTFG.Frontend.Dialogos
@@ -23,12 +24,14 @@ namespace TPVTFG.Frontend.Dialogos
     public partial class AgregarCategoria : MetroWindow
     {
         private MVCategoria _mvCategorias;
-        public AgregarCategoria(MVCategoria mvCategorias)
+        private MVProducto _mvProductos;
+        public AgregarCategoria(MVCategoria mvCategorias, MVProducto mvProductos)
         {
             InitializeComponent();
             _mvCategorias = mvCategorias;
             DataContext = _mvCategorias;
             _mvCategorias.btnGuardar = btnGuardar;
+            _mvProductos = mvProductos;
         }
 
         private async void btnGuardar_Click(object sender, RoutedEventArgs e)
@@ -40,6 +43,7 @@ namespace TPVTFG.Frontend.Dialogos
                 {
                     await this.ShowMessageAsync("Gestión crear categoria", "La categoria se ha guardado correctamente");
                     DialogResult = true;
+                    _mvCategorias._crearCategoria = new Categoria();
 
                 }
                 else
@@ -54,10 +58,12 @@ namespace TPVTFG.Frontend.Dialogos
                 this.ShowMessageAsync("Gestión crear categoria", "Tienes campos obligatorios sin rellenar correctamente");
 
             }
+            await _mvProductos.CargarCategoriasAsync();
         }
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
+            _mvCategorias._crearCategoria = new Categoria();
             this.Close();
         }
     }

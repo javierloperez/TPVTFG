@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using TPVTFG.MVVM.Base;
 
 namespace TPVTFG.Backend.Modelos;
 
 [PrimaryKey("VentaId", "ProductoId")]
 [Table("venta_productos")]
 [Index("ProductoId", Name = "ProductosID")]
-public partial class VentaProducto
+public partial class VentaProducto: PropertyChangedDataError
 {
     [Key]
     [Column("VentaID")]

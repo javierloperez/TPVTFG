@@ -43,7 +43,9 @@ namespace TPVTFG.Frontend
         {
             if (await usuarioServicio.Login(txtUsername.Text, txtPassword.Password))
             {
-                MainWindow ventaPrincipal = new MainWindow(contexto);
+                usuario = await usuarioServicio.GetUsuarioPorNombre(txtUsername.Text);
+
+                MainWindow ventaPrincipal = new MainWindow(contexto, usuario);
                 ventaPrincipal.Show();
                 this.Close();
             }

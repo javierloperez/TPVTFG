@@ -35,6 +35,7 @@ namespace TPVTFG.Frontend.ControlUser
             _mvOfertas = mvOfertas;
             _mvCategoria = mvCategoria;
             DataContext = _mvProducto;
+            txtBuscarNombre.Clear();
         }
 
         private void AgregarProducto_Click(object sender, RoutedEventArgs e)
@@ -51,7 +52,7 @@ namespace TPVTFG.Frontend.ControlUser
 
         private void AgregarCategoria_Click(object sender, RoutedEventArgs e)
         {
-            AgregarCategoria ac = new AgregarCategoria(_mvCategoria);
+            AgregarCategoria ac = new AgregarCategoria(_mvCategoria,_mvProducto);
             ac.ShowDialog();
         }
 
@@ -70,7 +71,9 @@ namespace TPVTFG.Frontend.ControlUser
                 MessageBox.Show("Error al intentar eliminar producto", "Gestión productos");
             }
 
-            
+            _mvProducto._crearProducto = new Producto();
+
+
         }
 
         private void btnEditar_Click(object sender, RoutedEventArgs e)
@@ -90,8 +93,20 @@ namespace TPVTFG.Frontend.ControlUser
             {
                 _mvProducto._crearProducto= articuloAux;
                 dgAñadirProducto.SelectedItem = articuloAux;
+                _mvProducto._crearProducto = new Producto();
+
 
             }
+        }
+
+        private void txtBuscarNombre_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _mvProducto.Filtrar();
+        }
+
+        private void cbCategoria_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _mvProducto.Filtrar();
         }
     }
 }

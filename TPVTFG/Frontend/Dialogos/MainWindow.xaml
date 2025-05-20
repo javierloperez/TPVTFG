@@ -11,15 +11,20 @@
 
     <DockPanel>
         <Grid Background="#00B2CA" DockPanel.Dock="Top" Height="85">
-            <Button x:Name="cerrarSesion" Foreground="White" Click="cerrarSesion_Click" Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="CornflowerBlue" HorizontalAlignment="Right" Margin="0 0 10 0" FontSize="30" Height="76">
-                <Button.Content>
-                    <mat:PackIcon Kind="Logout" Width="50" Height="50" Cursor=""/>
-                </Button.Content>
-            </Button>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <TextBlock  x:Name="nombreUsuario" FontSize="20" VerticalAlignment="Center" Foreground="White" Margin="0 0 20 0" />
+                <Button x:Name="cerrarSesion" Foreground="White" Click="cerrarSesion_Click" Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="CornflowerBlue"  Margin="0 0 10 0" FontSize="30" Height="76">
+                    <Button.Content>
+                        <mat:PackIcon Kind="Logout" Width="50" Height="50" Cursor=""/>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="20 0 0 0">
                 <Button x:Name="btnStock" Content="Stock" Style="{StaticResource MaterialDesignOutlinedButton}" Background="Transparent" mat:ButtonAssist.CornerRadius="15" Height="50" HorizontalAlignment="Left" FontSize="20" Foreground="White" Click="btnStock_Click" BorderBrush="Transparent"/>
 
                 <Button x:Name="btnClientes" Content="Clientes" Style="{StaticResource MaterialDesignOutlinedButton}" Background="Transparent" mat:ButtonAssist.CornerRadius="15" Height="50" HorizontalAlignment="Left" FontSize="20" Foreground="White" Click="btnClientes_Click" BorderBrush="Transparent"/>
+
+                <Button x:Name="btnVentas" Content="Ventas" Style="{StaticResource MaterialDesignOutlinedButton}" Background="Transparent" mat:ButtonAssist.CornerRadius="15" Height="50" HorizontalAlignment="Left" FontSize="20" Foreground="White" Click="btnVentas_Click" BorderBrush="Transparent"/>
 
             </StackPanel>
         </Grid>
@@ -67,9 +72,15 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
                     <TextBlock Text="Total..." FontSize="20" Margin="10 0 0 0" />
                     <TextBlock Grid.Column="1" HorizontalAlignment="Right"  x:Name="precioTotal" FontSize="20" Margin="0 0 10 0"/>
+                    <TextBlock Text="IVA" Grid.Row="1"  FontSize="20" Margin="10 0 0 0"/>
+                    <TextBox x:Name="porcentajeIva" Text="0" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 10 0" PreviewMouseDown="porcentajeIva_PreviewMouseDown" Width="50" HorizontalAlignment="Right" HorizontalContentAlignment="Center" TextChanged="porcentajeIva_TextChanged"/>
                 </Grid>
                 <Button x:Name="Calculadora" Grid.Row="1" Click="Calculadora_Click" Height="150" VerticalAlignment="Bottom">
                     <Button.Content>
@@ -77,6 +88,37 @@
 
                     </Button.Content>
                 </Button>
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="panelInferior" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0.8*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="30 10 0 0">
+                    <TextBlock Text="TOTAL:" TextDecorations="Underline" FontSize="20" FontWeight="Bold" />
+                    <TextBlock x:Name="precioConIva" FontSize="20" Margin="0 15 0 0" />
+
+                    <TextBlock x:Name="mensaje" Text="Cantidad a devolver:" FontSize="20" Margin="0 40 0 0" Visibility="Hidden"/>
+                    <TextBlock x:Name="totalADevolver" FontSize="20" Margin="0 15 0 0" Visibility="Hidden"/>
+                </StackPanel>
+
+                <StackPanel Margin="30 10 0 0" Grid.Column="1">
+                    <TextBlock Text="Tipo de cobro:" TextDecorations="Underline" FontSize="20" FontWeight="Bold"  />
+                    <RadioButton Content="Tarjeta" FontWeight="Bold" x:Name="tarjeta" Checked="efectivo_Checked" Margin="0 30 0 30 "/>
+                    <RadioButton  Content="Efectivo" FontWeight="Bold" x:Name="efectivo" Checked="efectivo_Checked" />
+                    <TextBox x:Name="cantidadRecibida" Text="0" FontSize="20" VerticalAlignment="Center" Margin="0 15 0 0" PreviewMouseDown="cantidadRecibida_PreviewMouseDown" Visibility="Hidden"  />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <ComboBox Grid.Column="2" Height="50" VerticalAlignment="Top"  x:Name="cbCliente" Style="{StaticResource MaterialDesignFilledComboBox}" mat:HintAssist.Hint="--Selecciona una categoria--" Margin="0 10 20 0" ItemsSource="{Binding _listaClientes}" DisplayMemberPath="Nombre" SelectionChanged="cbCliente_SelectionChanged"/>
+
+                    <TextBlock x:Name="txtNombreCliente" Text="Cliente: " FontSize="20" Margin="0 20 0 0" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Content="Aceptar" FontSize="25" x:Name="añadirVenta" Click="añadirVenta_Click" HorizontalContentAlignment="Center" Grid.Column="3" Height="235"/>
             </Grid>
         </Grid>
     </DockPanel>

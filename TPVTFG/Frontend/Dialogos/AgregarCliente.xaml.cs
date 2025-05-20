@@ -14,78 +14,71 @@ using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using TPVTFG.Backend.Modelos;
-using TPVTFG.Backend.Utiles;
 using TPVTFG.MVVM;
-using TPVTFG.MVVM.Base;
 
 namespace TPVTFG.Frontend.Dialogos
 {
     /// <summary>
-    /// Lógica de interacción para AgregarProducto.xaml
+    /// Lógica de interacción para AgregarCliente.xaml
     /// </summary>
-    public partial class AgregarProducto : MetroWindow
+    public partial class AgregarCliente : MetroWindow
     {
-
-        private Producto _producto;
-        private MVProducto _mvProducto;
+        private Cliente _cliente;
+        private MVClientes _mvClientes;
         private bool _editar;
-        public AgregarProducto(MVProducto mv, bool editar)
+        public AgregarCliente(MVClientes mv, bool editar)
         {
             InitializeComponent();
-            _mvProducto = mv;
-            DataContext = _mvProducto;
-            _producto = new Producto();
-            _mvProducto.btnGuardar = btnGuardar;
+            _mvClientes = mv;
+            DataContext = _mvClientes;
+            _cliente = new Cliente();
+            _mvClientes.btnGuardar = btnGuardar;
             _editar = editar;
-
         }
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
-            _mvProducto._crearProducto = new Producto();
-
+            _mvClientes._crearCliente = new Cliente();
             this.Close();
         }
 
         private async void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            _mvProducto._crearProducto.Activado = "si";
-
-            if (_mvProducto.IsValid(this))
+            _mvClientes._crearCliente.Activado = "si";
+            if (_mvClientes.IsValid(this))
             {
                 if (!_editar)
                 {
-                    if (_mvProducto.guarda)
+                    if (_mvClientes.guarda)
                     {
-                        await this.ShowMessageAsync("Gestión crear prodcuto", "El producto se ha guardado correctamente");
+                        await this.ShowMessageAsync("Gestión crear cliente", "El cliehte se ha guardado correctamente");
                         DialogResult = true;
-                        _mvProducto._crearProducto = new Producto();
-
-
+                        _mvClientes._crearCliente = new Cliente();
                     }
                     else
                     {
-                        await this.ShowMessageAsync("Gestión crear producto", "Error, algun campo esta incompleto o no es válido");
+                        await this.ShowMessageAsync("Gestión crear cliente", "Error, algun campo esta incompleto o no es válido");
 
 
                     }
                 }
                 else
                 {
-                    if (_mvProducto.actualizar)
+                    if (_mvClientes.actualizar)
                     {
-                        await this.ShowMessageAsync("Gestión actualizar prodcuto", "El producto se ha guardado correctamente");
+                        await this.ShowMessageAsync("Gestión actualizar cliente", "El producto se ha guardado correctamente");
                         DialogResult = true;
 
                     }
                     else
                     {
-                        await this.ShowMessageAsync("Gestión actualizar producto", "Error, algun campo esta incompleto o no es válido");
+                        await this.ShowMessageAsync("Gestión actualizar cliente", "Error, algun campo esta incompleto o no es válido");
 
 
                     }
 
                 }
+                await _mvClientes.RecargarListaClientesAsync();
             }
             else
             {
@@ -94,6 +87,5 @@ namespace TPVTFG.Frontend.Dialogos
             }
 
         }
-
     }
 }

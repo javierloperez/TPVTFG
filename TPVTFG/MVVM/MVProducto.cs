@@ -1,6 +1,8 @@
-﻿using System.Net.NetworkInformation;
+﻿using System.Collections.ObjectModel;
+using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using MaterialDesignThemes.Wpf;
@@ -8,6 +10,7 @@ using TPVTFG.Backend.Modelos;
 using TPVTFG.Backend.Servicios;
 using TPVTFG.Frontend;
 using TPVTFG.MVVM.Base;
+using Button = System.Windows.Controls.Button;
 
 namespace TPVTFG.MVVM
 {
@@ -15,6 +18,7 @@ namespace TPVTFG.MVVM
     {
         TpvbdContext _contexto;
         Categoria _categoria;
+        Categoria _categoriaSeleccionada;
         CategoriaServicio _categoriaServicio;
         Producto _producto;
         ProductoServicio _productoServicio;
@@ -22,38 +26,135 @@ namespace TPVTFG.MVVM
         OfertaServicio _ofertaServicio;
         WrapPanel _panelMedio;
         StackPanel _panelTicket;
+        StackPanel _panelCategorias;
         TextBlock _precioTotal;
+        TextBlock _precioConIva;
+        Grid _panelInferior;
+        TextBox _iva;
+
+
         int it = 0;
         decimal? precioFinal = 0;
         int _cantidadItem;
         private Dictionary<int, int> _stockTemporal = new Dictionary<int, int>();
         public bool _actualizarCantidad { get; set; }
-
+        private string _nombreP;
         public IEnumerable<Categoria> _listaCategorias { get { return Task.Run(_categoriaServicio.GetAllAsync).Result; } }
+        private ObservableCollection<Categoria> _listaCategoriasAux;
+        public ObservableCollection<Categoria> ListaCategoriasAux
+        {
+            get => _listaCategoriasAux;
+            set
+            {
+                _listaCategoriasAux = value;
+                OnPropertyChanged(nameof(ListaCategoriasAux));
+            }
+        }
+
+
+
         public IEnumerable<Producto> _listaProductos { get { return Task.Run(_productoServicio.GetAllAsync).Result.Where(p => p.Activado.ToLower().Equals("si")); } }
         public IEnumerable<Oferta> _listaOfertas { get { return Task.Run(_ofertaServicio.GetAllAsync).Result; } }
 
+        private ListCollectionView _listaProductosParaFiltro;
+        public ListCollectionView listaProductosFiltro => _listaProductosParaFiltro;
+        private Predicate<object> predicadoFiltro;
+        private List<Predicate<Producto>> criterios;
 
+        private Predicate<Producto> criterioBusqueda;
+        private Predicate<Producto> criterioCategoria;
+
+
+        public void LimpiarStock()
+        {
+            _stockTemporal = new Dictionary<int, int>();
+            precioFinal = 0;
+        }
         public Producto Clonar { get { return (Producto)_producto.Clone(); } }
 
-        public bool guarda { get { return Task.Run(() => Add(_crearProducto)).Result; } }
-        public bool borrar { get { return Task.Run(() => Delete(_crearProducto)).Result; } }
-        public bool actualizar { get { return Task.Run(() => Update(_crearProducto)).Result; } }
+        public bool guarda
+        {
+            get
+            {
+                var resultado = Task.Run(() => Add(_crearProducto)).Result;
+                Task.Run(RecargarListaProductosAsync);
+                return resultado;
+            }
+        }
+
+        public bool actualizar
+        {
+            get
+            {
+                var resultado = Task.Run(() => Update(_crearProducto)).Result;
+                Task.Run(RecargarListaProductosAsync);
+                return resultado;
+            }
+        }
+
+
+        public async Task RecargarListaProductosAsync()
+        {
+            var productos = await _productoServicio.GetAllAsync();
+            var productosActivos = productos
+                .Where(p => p.Activado?.ToLower() == "si")
+                .ToList();
+
+            _listaProductosParaFiltro = new ListCollectionView(productosActivos);
+            _listaProductosParaFiltro.Filter = predicadoFiltro;
+
+            OnPropertyChanged(nameof(listaProductosFiltro));
+        }
+
+        public async Task CargarCategoriasAsync()
+        {
+            var listaOriginal = await _categoriaServicio.GetAllAsync();
+
+            var listaConExtra = new ObservableCollection<Categoria>
+    {
+        new Categoria { Id = -1, Categoria1 = "--Selecciona una categoría--" }
+    };
+
+            foreach (var cat in listaOriginal)
+            {
+                listaConExtra.Add(cat);
+            }
+
+            ListaCategoriasAux = listaConExtra;
+        }
 
         public Producto _crearProducto
         {
             get { return _producto; }
             set { _producto = value; OnPropertyChanged(nameof(_crearProducto)); }
         }
+        public string filtroNombre
+        {
+            get { return _nombreP; }
+            set
+            {
+                _nombreP = value; OnPropertyChanged(nameof(filtroNombre));
+                if (_nombreP == null)
+                {
 
+                    _nombreP = "";
+                }
+            }
+        }
 
+        public Categoria categoriaSeleccionada
+        {
+            get => _categoriaSeleccionada;
+            set { _categoriaSeleccionada = value; OnPropertyChanged(nameof(categoriaSeleccionada)); }
+        }
         public MVProducto(TpvbdContext contexto)
         {
             _contexto = contexto;
         }
 
-        public async Task Inicializa(WrapPanel panelMedio, StackPanel panelTicket, TextBlock precioTotal)
+        public async Task Inicializa(WrapPanel panelMedio, StackPanel panelTicket, TextBlock precioTotal, StackPanel panelCategorias, Grid panelInferior, TextBlock precioConIva, System.Windows.Controls.TextBox porcentajeIva)
         {
+
             _categoria = new Categoria();
             _categoriaServicio = new CategoriaServicio(_contexto);
             _producto = new Producto();
@@ -63,9 +164,21 @@ namespace TPVTFG.MVVM
             _panelMedio = panelMedio;
             _panelTicket = panelTicket;
             _precioTotal = precioTotal;
+            _panelCategorias = panelCategorias;
+            _panelInferior = panelInferior;
+            _precioConIva = precioConIva;
+            _iva = porcentajeIva;
+            await CargarCategoriasAsync();
 
             servicio = _productoServicio;
-            
+            _listaProductosParaFiltro = new ListCollectionView((await _productoServicio.GetAllAsync()).ToList());
+            criterios = new List<Predicate<Producto>>();
+            predicadoFiltro = new Predicate<object>(FiltroCriterios);
+            criterios.Clear();
+            ListadoCategorias(_panelCategorias);
+
+            InicializaCriterios();
+
         }
 
         public void ListadoCategorias(StackPanel panelCategorias)
@@ -133,7 +246,7 @@ namespace TPVTFG.MVVM
                     Tag = item
                 };
                 i++;
-               
+
                 btn.Click += (s, e) =>
                 {
                     _cantidadItem = 1;
@@ -224,7 +337,7 @@ namespace TPVTFG.MVVM
 
                 btnEliminar.Click += (sender, e) =>
                 {
-                    
+
                     _panelTicket.Children.Remove(fila);
                     _stockTemporal.Remove(producto.Id);
                     ModificarTotal(precioFinal * -1);
@@ -257,7 +370,7 @@ namespace TPVTFG.MVVM
 
                                 RegistrarStockTemporal(producto.Id, nuevaCantidad);
                                 ModificarTotal(precioNuevo - precioAnterior);
-                                if(nuevaCantidad < cantidadAnterior)
+                                if (nuevaCantidad < cantidadAnterior)
                                 {
                                     btn.IsEnabled = true;
                                 }
@@ -282,7 +395,7 @@ namespace TPVTFG.MVVM
                 RegistrarStockTemporal(producto.Id, cantidad);
                 ModificarTotal(precioFinal);
 
-                if((producto.Cantidad - _stockTemporal[producto.Id]) == 0)
+                if ((producto.Cantidad - _stockTemporal[producto.Id]) == 0)
                 {
                     btn.IsEnabled = false;
                 }
@@ -295,6 +408,19 @@ namespace TPVTFG.MVVM
 
         }
 
+        public Dictionary<int, int> CogerListaTicket()
+        {
+            return _stockTemporal;
+        }
+
+        public decimal CogerPrecioProducto(int id)
+        {
+            decimal precio = 0;
+            Producto prod = new Producto();
+            prod = _productoServicio.GetByIdAsync(id).Result;
+            precio = prod.Precio;
+            return precio;
+        }
         public int ObtenerStockDisponible(int idProducto, int stockOriginal)
         {
             if (_stockTemporal.ContainsKey(idProducto))
@@ -313,8 +439,62 @@ namespace TPVTFG.MVVM
 
         private void ModificarTotal(decimal? precio)
         {
-            precioFinal += precio;
-            _precioTotal.Text = precioFinal.ToString() + "€";
+            try
+            {
+                precioFinal += precio;
+                _precioTotal.Text = precioFinal.ToString() + "€";
+
+                _precioConIva.Text = (decimal.Parse(_precioTotal.Text.TrimEnd('€')) * (1 + decimal.Parse(_iva.Text) / 100)).ToString("0.00") + "€";
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private void AddCriterios()
+        {
+            criterios.Clear();
+
+            if (!string.IsNullOrEmpty(filtroNombre))
+            {
+                criterios.Add(criterioBusqueda);
+            }
+            if (categoriaSeleccionada != null)
+            {
+                if (categoriaSeleccionada.Id == -1)
+                {
+                    criterios.Remove(criterioCategoria);
+                }
+                else
+                {
+                    criterios.Add(criterioCategoria);
+                }
+            }
+
+        }
+        private void InicializaCriterios()
+        {
+            criterioBusqueda = new Predicate<Producto>(m => !string.IsNullOrEmpty(m.Descripcion) && m.Descripcion.ToLower().StartsWith(filtroNombre.ToLower()));
+            criterioCategoria = new Predicate<Producto>(m => m.CategoriaNavigation != null && m.CategoriaNavigation.Equals(categoriaSeleccionada));
+
+        }
+
+        public void Filtrar()
+        {
+            AddCriterios();
+            listaProductosFiltro.Filter = predicadoFiltro;
+        }
+
+        private bool FiltroCriterios(object item)
+        {
+            bool correcto = true;
+            Producto producto = (Producto)item;
+            if (criterios != null)
+            {
+                correcto = criterios.TrueForAll(x => x(producto));
+            }
+            return correcto;
         }
     }
 }
