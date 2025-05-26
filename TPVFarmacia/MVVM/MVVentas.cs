@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using TVPFarmacia.Backend.Modelos;
 using TVPFarmacia.Backend.Servicios;
 using TVPFarmacia.Frontend;
@@ -20,16 +22,26 @@ namespace TVPFarmacia.MVVM
         UsuarioServicio _usuarioServicio;
         public List<Venta> _listaVentas { get; set; } = new List<Venta>();
         public List<Usuario> _listaUsuarios { get; set; } = new List<Usuario>();
+        public List<Cliente> _listaClientes { get; set; } = new List<Cliente>();
 
-        public IEnumerable<Cliente> _listaClientes { get { return Task.Run(_clienteServicio.GetAllAsync).Result.Where(c => c.Activado.ToLower().Equals("si")); } }
 
+        
         public bool guarda { get { return Task.Run(() => Add(_crearVenta)).Result; } }
+        public bool borrar { get { return Task.Run(() => Delete(_crearVenta)).Result; } }
 
 
         public Venta _crearVenta
         {
             get { return _venta; }
             set { _venta = value; OnPropertyChanged(nameof(_crearVenta)); }
+        }
+
+        public async Task CargarClientesAsync()
+        {
+            var clientes = await _clienteServicio.GetAllAsync();
+            _listaClientes = clientes
+                .Where(c => c.Activado.Equals("si", StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         public async Task CargarVentasAsync()
@@ -56,6 +68,7 @@ namespace TVPFarmacia.MVVM
             _clienteServicio = new ClienteServicio(_contexto);
             _usuarioServicio = new UsuarioServicio(_contexto);
             servicio = _ventaServicio;
+            await CargarClientesAsync();
             await CargarVentasAsync();
             await CargarUsuariosAsync();
         }
@@ -80,7 +93,7 @@ namespace TVPFarmacia.MVVM
                 }
                 else
                 {
-                    MessageBox.Show("Error al crear al cliente, faltan campos por rellenar");
+                    MessageBox.Show("Error al crear la venta, faltan campos por rellenar");
                     return -1;
                 }
             }

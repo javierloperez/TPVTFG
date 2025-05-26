@@ -25,12 +25,13 @@ namespace TVPFarmacia.Frontend.Dialogos
         /// Constructor de la clase ListaVentas.
         /// </summary>
         /// <param name="mvVentas">Mv de ventas</param>
-        /// <param name="mvClientes">Mv de cliente</param>
-        public ListaVentas(MVVentas mvVentas, MVClientes mvClientes)
+        /// <param name="mvVentasProducto">Mv de ventasProducto</param>
+        /// <param name="mvProducto">Mv de producto</param>
+        public ListaVentas(MVVentas mvVentas, MVVentasProducto mvVentasProducto, MVProducto mvProducto)
         {
             InitializeComponent();
             //Llamamos al user de TreeVentas para mostrar las ventas y clientes asociados.
-            TreeVentas tv = new TreeVentas(mvVentas, mvClientes);
+            TreeVentas tv = new TreeVentas(mvVentas,mvVentasProducto,mvProducto);
             panelPrincipal.Children.Clear();
             panelPrincipal.Children.Add(tv);
         }

@@ -19,19 +19,30 @@ namespace TVPFarmacia.MVVM
 
 
         public IEnumerable<VentaProducto> _listaVentas { get { return Task.Run(_ventaServicio.GetAllAsync).Result; } }
-        public bool guarda { get { return Task.Run(() => Add(_crearVenta)).Result; } }
+        public bool guarda { get { return Task.Run(() => Add(_crearVentaP)).Result; } }
 
-
-        public VentaProducto _crearVenta
+        public bool borrar;
+        public VentaProducto _crearVentaP
         {
             get { return _venta; }
-            set { _venta = value; OnPropertyChanged(nameof(_crearVenta)); }
+            set { _venta = value; OnPropertyChanged(nameof(_crearVentaP)); }
         }
 
 
         public MVVentasProducto(TpvbdContext contexto)
         {
             _contexto = contexto;
+        }
+
+        public void BorrarVentasID(int ids)
+        {
+            foreach (var ventaProducto in _listaVentas)
+            {
+                if (ventaProducto.VentaId == ids)
+                {
+                    borrar = Task.Run(() => _ventaServicio.DeleteAsync(ventaProducto)).Result;
+                }
+            }
         }
 
         public async Task Inicializa()
@@ -46,10 +57,10 @@ namespace TVPFarmacia.MVVM
         public void InsertarVenta(int idProd, int cantidad, decimal precio, int idVenta)
         {
 
-            _crearVenta.VentaId = idVenta;
-            _crearVenta.ProductoId = idProd;
-            _crearVenta.Cantidad = cantidad;
-            _crearVenta.Precio = (double)precio;
+            _crearVentaP.VentaId = idVenta;
+            _crearVentaP.ProductoId = idProd;
+            _crearVentaP.Cantidad = cantidad;
+            _crearVentaP.Precio = (double)precio;
 
             if (guarda)
             {
@@ -61,5 +72,19 @@ namespace TVPFarmacia.MVVM
             }
         }
 
+        public Dictionary<int,int> RecogerListaProductos(int idVenta)
+        {
+            Dictionary<int,int> idProductos = new Dictionary<int, int>();
+
+            foreach(var ventaProducto in _listaVentas)
+            {
+                if (ventaProducto.VentaId == idVenta)
+                {
+                    idProductos.Add(ventaProducto.ProductoId, ventaProducto.Cantidad);
+                }
+            }
+
+            return idProductos;
+        }
     }
 }

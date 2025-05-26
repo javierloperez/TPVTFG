@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TVPFarmacia.Backend.Modelos;
 using TVPFarmacia.MVVM;
 
 namespace TVPFarmacia.Frontend.ControlUser
@@ -25,21 +26,75 @@ namespace TVPFarmacia.Frontend.ControlUser
         /// Declara las variables de la vista modelo de ventas y clientes.
         /// </summary>
         private MVVentas _mvVentas;
-        private MVClientes _mvClientes;
+        private MVProducto _mvProducto;
+        private MVVentasProducto _mvVentasProducto;
 
         /// <summary>
         /// Constructor de la clase TreeVentas.
         /// </summary>
         /// <param name="mvVentas">Mv de ventas</param>
-        /// <param name="mvClientes">Mv de clientes</param>
-        public TreeVentas(MVVentas mvVentas, MVClientes mvClientes)
+        /// <param name="mvProducto">Mv de productos</param>
+        /// <param name="mvVentasProducto">Mv de ventasProducto</param>
+        public TreeVentas(MVVentas mvVentas, MVVentasProducto mvVentasProducto, MVProducto mvProducto)
         {
             InitializeComponent();
             _mvVentas = mvVentas;
-            _mvClientes = mvClientes;
+            _mvProducto = mvProducto;
+            _mvVentasProducto = mvVentasProducto;
             DataContext = _mvVentas;
         }
 
-        
+        private void treeVentas_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (treeVentas.SelectedItem != null && treeVentas.SelectedItem is Venta)
+            {
+                int idVenta = ((Venta)treeVentas.SelectedItem).Id;
+                Dictionary<int, int> listaIDProductos = new Dictionary<int, int>();
+                listaIDProductos = _mvVentasProducto.RecogerListaProductos(idVenta);
+
+                List<Producto> productos = new List<Producto>();
+                productos = _mvProducto._listaProductos.Where(p => listaIDProductos.Keys.Contains(p.Id)).ToList();
+
+                foreach (Producto producto in productos)
+                {
+                    producto.Cantidad = listaIDProductos[producto.Id];
+                }
+                dgProductos.ItemsSource = productos;
+            }
+        }
+        private async void EliminarVenta_Click(object sender, RoutedEventArgs e)
+        {
+            if (treeVentas.SelectedItem is Venta ventaSeleccionada)
+            {
+                var resultado = MessageBox.Show(
+                    $"¿Estás seguro que deseas eliminar la venta?",
+                    "Confirmar eliminación",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (resultado == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+
+                        _mvVentas._crearVenta = ventaSeleccionada;
+
+                        _mvVentasProducto.BorrarVentasID(ventaSeleccionada.Id);
+                        await _mvVentas.Delete(_mvVentas._crearVenta);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al eliminar la venta: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    }
+                    _mvVentas._crearVenta = new Venta();
+                    await _mvVentas.CargarVentasAsync();
+                    treeVentas.Items.Refresh();
+                }
+            }
+        }
+
+
     }
 }

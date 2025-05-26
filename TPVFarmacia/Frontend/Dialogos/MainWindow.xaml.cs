@@ -126,7 +126,7 @@ namespace TVPFarmacia.Frontend
 
         private void btnVentas_Click(object sender, RoutedEventArgs e)
         {
-            ListaVentas lv = new ListaVentas(_mvVentas, _mvClientes);
+            ListaVentas lv = new ListaVentas(_mvVentas, _mvVentasProducto,_mvProducto);
             lv.ShowDialog();
         }
 

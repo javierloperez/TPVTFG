@@ -11,11 +11,11 @@
 
     <DockPanel>
         <Grid DockPanel.Dock="Left" Background="MistyRose">
-            <TreeView x:Name="treeVentas" ItemsSource="{Binding _listaClientes}">
+            <TreeView x:Name="treeVentas" ItemsSource="{Binding _listaClientes}" SelectedItemChanged="treeVentas_SelectedItemChanged">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type ent:Cliente}" ItemsSource="{Binding Ventas}">
                         <StackPanel Orientation="Horizontal">
-                            <mat:PackIcon Kind="Airballoon" Width="16" Height="16" Foreground="DodgerBlue"/>
+                            <mat:PackIcon Kind="User" Width="16" Height="16" Foreground="Purple"/>
                             <!--<TextBlock Text="{Binding}"/> Esta funciona con el toString -->
                             <TextBlock Margin="10 0 0 0">
                                 <TextBlock.Text>
@@ -27,9 +27,10 @@
                             </TextBlock>
                         </StackPanel>
                     </HierarchicalDataTemplate>
-                    <DataTemplate DataType="{x:Type ent:Venta}" >
-                        <StackPanel Orientation="Horizontal">
-                            <mat:PackIcon Kind="AirConditioningOff" Width="16" Height="16" Foreground="DodgerBlue"/>
+                    <DataTemplate DataType="{x:Type ent:Venta}"  >
+                        <StackPanel Orientation="Horizontal" ContextMenuOpening="EliminarVenta_Click">
+
+                            <mat:PackIcon Kind="Calendar" Width="16" Height="16" Foreground="Purple"/>
                             <TextBlock Margin="10 0 0 0">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0:dd/MM/yyyy} .... Precio: {1}€   ---    Vendido por {2}">
@@ -39,11 +40,19 @@
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
-                        </StackPanel>
+                            </StackPanel>
                     </DataTemplate>
                 </TreeView.Resources>
             </TreeView>
         </Grid>
-
+        <Grid >
+            <DataGrid x:Name="dgProductos" AutoGenerateColumns="False" ColumnWidth="*" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn  Header="Nombre de producto" Binding="{Binding Descripcion}"/>
+                    <DataGridTextColumn  Header="Cantidad" Binding="{Binding Cantidad}"/>
+                    <DataGridTextColumn  Header="Precio" Binding="{Binding Precio}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </DockPanel>
 </UserControl>
