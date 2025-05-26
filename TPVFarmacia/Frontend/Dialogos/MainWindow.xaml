@@ -1,0 +1,147 @@
+﻿<mah:MetroWindow x:Class="TVPFarmacia.Frontend.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TVPFarmacia"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:mat="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        ShowTitleBar="False" WindowState="Maximized" ShowCloseButton="False" ShowMaxRestoreButton="False" ShowMinButton="False " TitleBarHeight="50">
+
+    <DockPanel>
+        <Grid Background="#00B2CA" DockPanel.Dock="Top" Height="85">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button  x:Name="nombreUsuario" FontSize="20" Click="nombreUsuario_Click" VerticalAlignment="Center" Foreground="White" Margin="0 0 20 0" Width="200" Background="Transparent" BorderBrush="Transparent"/>
+                <Button x:Name="cerrarSesion" Foreground="White" Click="cerrarSesion_Click" Style="{StaticResource MaterialDesignFlatButton}" BorderBrush="CornflowerBlue"  Margin="0 0 10 0" FontSize="30" Height="76">
+                    <Button.Content>
+                        <mat:PackIcon Kind="Logout" Width="50" Height="50" Cursor=""/>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="20 0 0 0">
+                <Button x:Name="btnStock" Content="Productos" Style="{StaticResource MaterialDesignOutlinedButton}" Background="Transparent" mat:ButtonAssist.CornerRadius="15" Height="50" HorizontalAlignment="Left" FontSize="20" Foreground="White" Click="btnStock_Click" BorderBrush="Transparent" Visibility="Visible"/>
+
+                <Button x:Name="btnClientes" Content="Clientes" Style="{StaticResource MaterialDesignOutlinedButton}" Background="Transparent" mat:ButtonAssist.CornerRadius="15" Height="50" HorizontalAlignment="Left" FontSize="20" Foreground="White" Click="btnClientes_Click" BorderBrush="Transparent" Visibility="Visible"/>
+
+                <Button x:Name="btnVentas" Content="Ventas" Style="{StaticResource MaterialDesignOutlinedButton}" Background="Transparent" mat:ButtonAssist.CornerRadius="15" Height="50" HorizontalAlignment="Left" FontSize="20" Foreground="White" Click="btnVentas_Click" BorderBrush="Transparent" Visibility="Visible"/>
+
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="panelPrincipal" >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.3*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="0.6*"/>
+            </Grid.ColumnDefinitions>
+
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2.3*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <ScrollViewer Background="#FDFCFB">
+                <StackPanel Margin="10">
+                    <TextBlock Grid.Column="0" VerticalAlignment="Bottom" Text="Las mieles hueles S.L" Foreground="Black" FontStyle="Italic" FontSize="20" Margin="0 0 0 10" HorizontalAlignment="Center"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Producto" FontSize="15" />
+                        <TextBlock Text="Cantidad" FontSize="15" Margin="70 0 25 0" />
+                        <TextBlock Text="Precio" FontSize="15"/>
+                    </StackPanel>
+                    <Separator/>
+
+                    <StackPanel x:Name="panelTicket">
+                        
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <WrapPanel Grid.Column ="1" Background="LightBlue" x:Name="panelMedio"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="3" Grid.Column="2">
+                <StackPanel Grid.Column ="2"  x:Name="panelCategorias" />
+
+            </ScrollViewer>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="1.7*"/>
+                </Grid.RowDefinitions>
+                <Grid Background="Wheat" x:Name="panelTotal">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Total..." FontSize="20" Margin="10 0 0 0" />
+                    <TextBlock Grid.Column="1" HorizontalAlignment="Right"  x:Name="precioTotal" FontSize="20" Margin="0 0 10 0"/>
+                    <TextBlock Text="IVA" Grid.Row="1"  FontSize="20" Margin="10 0 0 0"/>
+                    <TextBox x:Name="porcentajeIva" Text="0" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 10 0" PreviewMouseDown="porcentajeIva_PreviewMouseDown" Width="50" HorizontalAlignment="Right" HorizontalContentAlignment="Center" TextChanged="porcentajeIva_TextChanged"/>
+                </Grid>
+                <Button x:Name="Calculadora" Grid.Row="1" Click="Calculadora_Click" Height="150" VerticalAlignment="Bottom">
+                    <Button.Content>
+                        <Image Source="/Iconos/Calculadora.png" />
+
+                    </Button.Content>
+                </Button>
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="panelInferior" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0.8*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="30 10 0 0">
+                    <TextBlock Text="TOTAL:" TextDecorations="Underline" FontSize="20" FontWeight="Bold" />
+                    <TextBlock x:Name="precioConIva" FontSize="20" Margin="0 15 0 0" />
+
+                    <TextBlock x:Name="mensaje" Text="Cantidad a devolver:" FontSize="20" Margin="0 40 0 0" Visibility="Hidden"/>
+                    <TextBlock x:Name="totalADevolver" FontSize="20" Margin="0 15 0 0" Visibility="Hidden"/>
+                </StackPanel>
+
+                <StackPanel Margin="30 10 0 0" Grid.Column="1">
+                    <TextBlock Text="Tipo de cobro:" TextDecorations="Underline" FontSize="20" FontWeight="Bold"  />
+                    <RadioButton FontWeight="Bold" FontSize="20" VerticalAlignment="Center" x:Name="tarjeta" Checked="efectivo_Checked" Margin="0 15 0 15 ">
+                        <RadioButton.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Tarjeta" VerticalAlignment="Center" TextAlignment="Center"/>
+                                <Image Source="/Iconos/TarjetaCredito.png" Width="50" Margin="20 0 0 0"/>
+                            </StackPanel>
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <RadioButton FontWeight="Bold" FontSize="20" x:Name="efectivo" Checked="efectivo_Checked">
+                        <RadioButton.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Efectivo" VerticalAlignment="Center" TextAlignment="Center"/>
+                                <Image Source="/Iconos/Efectivo.png" Width="50" Margin="20 0 0 0"/>
+                            </StackPanel>
+                        </RadioButton.Content>
+                    </RadioButton>
+
+                    <TextBox x:Name="cantidadRecibida" Text="0" FontSize="20" VerticalAlignment="Center" Margin="0 15 15 0" PreviewMouseDown="cantidadRecibida_PreviewMouseDown" Visibility="Hidden"  />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <ComboBox Grid.Column="2" Height="50" VerticalAlignment="Top"  x:Name="cbCliente" Style="{StaticResource MaterialDesignFilledComboBox}" mat:HintAssist.Hint="--Selecciona una categoria--" Margin="0 10 20 0" ItemsSource="{Binding listaClientesFiltro}" DisplayMemberPath="Nombre" SelectionChanged="cbCliente_SelectionChanged"/>
+
+                    <TextBlock x:Name="txtNombreCliente" Text="Cliente: " FontSize="20" Margin="0 20 0 0" HorizontalAlignment="Center"/>
+
+
+                    <Button Content="Nuevo cliente" Margin="15 30 15 15" FontSize="25" x:Name="añadirCliente" Click="añadirCliente_Click" HorizontalContentAlignment="Center" Height="60"/>
+                </StackPanel>
+
+                <Button Content="Cobrar" FontSize="25" x:Name="añadirVenta" Click="añadirVenta_Click" HorizontalContentAlignment="Center" Grid.Column="3" Height="235"/>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</mah:MetroWindow>
