@@ -45,15 +45,28 @@ namespace TVPFarmacia.Frontend.Dialogos
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            if(int.Parse(_textBoxDestino.Text)>maxCantidad)
+            
+            if((int)Math.Round(decimal.Parse(_textBoxDestino.Text))>maxCantidad)
             {
                 _textBoxDestino.Text = maxCantidad.ToString();
             }
-            else if (int.Parse(_textBoxDestino.Text)<1)
+            else if (decimal.Parse(_textBoxDestino.Text)<1)
             {
                 _textBoxDestino.Text = "1";
             }
                 this.Close();
+        }
+
+        private void Decimal_Click(object sender, RoutedEventArgs e)
+        {
+            if (_textBoxDestino.Text.Length > 0)
+            {
+                if (!_textBoxDestino.Text.Contains(","))
+                {
+                _textBoxDestino.Text+=",";
+                }
+            }
+            
         }
     }
 }

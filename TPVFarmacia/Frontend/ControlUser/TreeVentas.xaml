@@ -33,7 +33,7 @@
                             <mat:PackIcon Kind="Calendar" Width="16" Height="16" Foreground="Purple"/>
                             <TextBlock Margin="10 0 0 0">
                                 <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0:dd/MM/yyyy} .... Precio: {1}€   ---    Vendido por {2}">
+                                    <MultiBinding StringFormat="{}{0:dd/MM/yyyy hh:mm } .... Precio: {1}€   ---    Vendido por {2}">
                                         <Binding Path="Fecha"/>
                                         <Binding Path="Total"/>
                                         <Binding Path="Empleado.Nombre"/>

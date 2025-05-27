@@ -34,6 +34,7 @@ namespace TVPFarmacia.Frontend
         private MVUsuario _mvUsuario;
         private string _tipoPago; // Tipo de pago seleccionado (efectivo o tarjeta)
         private Cliente _clienteElegido;
+        private readonly string _nombreFarmacia = "Las mieles hueles S.L";
 
         /// <summary>
         /// Constructor de la clase MainWindow.
@@ -44,12 +45,30 @@ namespace TVPFarmacia.Frontend
         {
             InitializeComponent();
             _contexto = contexto;
-            _ = Inicializa();
             _usuario = usuario;
+            _ = Inicializa();
             // Asignación del usuario a la ventana principal
             nombreUsuario.Content = _usuario.Nombre + " " + usuario.Apellidos;
+            nombreFarmacia.Text = _nombreFarmacia;
 
-            
+        }
+
+
+        public void CompruebaPermisos()
+        {
+            if (_usuario.UsuarioRole.Rol.Nombre.ToLower().Equals("empleado"))
+            {
+
+                btnStock.Visibility = Visibility.Hidden;
+                btnVentas.Visibility = Visibility.Hidden;
+                btnClientes.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                btnStock.Visibility = Visibility.Visible;
+                btnVentas.Visibility = Visibility.Visible;
+                btnClientes.Visibility = Visibility.Visible;
+            }
         }
 
         /// <summary>
@@ -60,6 +79,7 @@ namespace TVPFarmacia.Frontend
         {
             try
             {
+
                 _mvOfertas = new MVOfertas(_contexto);
                 await _mvOfertas.Inicializa();
 
@@ -82,6 +102,7 @@ namespace TVPFarmacia.Frontend
                 await _mvVentasProducto.Inicializa();
 
                 DataContext = _mvClientes;
+                CompruebaPermisos();
             }
             catch (Exception ex)
             {
@@ -101,8 +122,6 @@ namespace TVPFarmacia.Frontend
             login.Show();
             this.Close();
         }
-
-
 
         private void Calculadora_Click(object sender, RoutedEventArgs e)
         {
@@ -126,7 +145,7 @@ namespace TVPFarmacia.Frontend
 
         private void btnVentas_Click(object sender, RoutedEventArgs e)
         {
-            ListaVentas lv = new ListaVentas(_mvVentas, _mvVentasProducto,_mvProducto);
+            ListaVentas lv = new ListaVentas(_mvVentas, _mvVentasProducto, _mvProducto);
             lv.ShowDialog();
         }
 
@@ -212,8 +231,6 @@ namespace TVPFarmacia.Frontend
                 GlobalFontSettings.FontResolver = new CustomFontResolver();
 
                 PdfDocument document = new PdfDocument();
-                document.Info.Title = "Ticket de venta";
-
                 PdfPage page = document.AddPage();
                 XGraphics gfx = XGraphics.FromPdfPage(page);
                 var font = new XFont("Arial", 11, XFontStyleEx.Regular);
@@ -222,7 +239,7 @@ namespace TVPFarmacia.Frontend
                 int y = 0;
 
                 // Título
-                gfx.DrawString("FARMACIA TPV", fontTitle, XBrushes.Black, new XRect(0, y, page.Width, 20), XStringFormats.TopCenter);
+                gfx.DrawString(_nombreFarmacia, fontTitle, XBrushes.Black, new XRect(0, y, page.Width, 20), XStringFormats.TopCenter);
                 y += 50;
 
                 // Datos
@@ -232,7 +249,7 @@ namespace TVPFarmacia.Frontend
                 gfx.DrawString($"Empleado: {_usuario.Nombre} {_usuario.Apellidos}", font, XBrushes.Black, 20, y);
                 y += 20;
 
-                gfx.DrawString($"Cliente: {_clienteElegido?.Nombre ?? "Sin cliente"}", font, XBrushes.Black, 20, y+20);
+                gfx.DrawString($"Cliente: {_clienteElegido?.Nombre ?? "Sin cliente"}", font, XBrushes.Black, 20, y + 20);
                 y += 30;
 
                 // Coordenadas columna
@@ -272,7 +289,7 @@ namespace TVPFarmacia.Frontend
                 gfx.DrawString("TOTAL SIN IVA:", boldFont, XBrushes.Black, xPrecio - 100, y, XStringFormats.TopRight);
                 gfx.DrawString($"{total:C}", boldFont, XBrushes.Black, xPrecio, y, XStringFormats.TopRight);
                 y += 20;
-                total = total + (total * int.Parse(porcentajeIva.Text)/100);
+                total = total + (total * int.Parse(porcentajeIva.Text) / 100);
                 gfx.DrawString("IVA:", boldFont, XBrushes.Black, xPrecio - 100, y, XStringFormats.TopRight);
                 gfx.DrawString($"{porcentajeIva.Text}%", boldFont, XBrushes.Black, xPrecio, y, XStringFormats.TopRight);
 

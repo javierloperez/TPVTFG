@@ -49,16 +49,19 @@ namespace TVPFarmacia.Frontend.ControlUser
             if (treeVentas.SelectedItem != null && treeVentas.SelectedItem is Venta)
             {
                 int idVenta = ((Venta)treeVentas.SelectedItem).Id;
-                Dictionary<int, int> listaIDProductos = new Dictionary<int, int>();
-                listaIDProductos = _mvVentasProducto.RecogerListaProductos(idVenta);
+                Dictionary<int, int> listaIDProductos = _mvVentasProducto.RecogerListaProductos(idVenta);
 
-                List<Producto> productos = new List<Producto>();
-                productos = _mvProducto._listaProductos.Where(p => listaIDProductos.Keys.Contains(p.Id)).ToList();
+                // Creamos copias nuevas, sin modificar los originales
+                List<Producto> productos = _mvProducto._listaProductos
+                    .Where(p => listaIDProductos.Keys.Contains(p.Id))
+                    .Select(p => new Producto
+                    {
+                        Id = p.Id,
+                        Descripcion = p.Descripcion,
+                        Precio = _mvProducto.CogerPrecioProducto(p.Id) * listaIDProductos[p.Id],
+                        Cantidad = listaIDProductos[p.Id]
+                    }).ToList();
 
-                foreach (Producto producto in productos)
-                {
-                    producto.Cantidad = listaIDProductos[producto.Id];
-                }
                 dgProductos.ItemsSource = productos;
             }
         }

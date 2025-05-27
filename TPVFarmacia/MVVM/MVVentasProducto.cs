@@ -72,6 +72,11 @@ namespace TVPFarmacia.MVVM
             }
         }
 
+        /// <summary>
+        /// Método que recoge la lista de productos de una venta concreta.
+        /// </summary>
+        /// <param name="idVenta"></param>
+        /// <returns></returns>
         public Dictionary<int,int> RecogerListaProductos(int idVenta)
         {
             Dictionary<int,int> idProductos = new Dictionary<int, int>();

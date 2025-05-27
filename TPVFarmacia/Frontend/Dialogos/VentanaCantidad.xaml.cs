@@ -27,10 +27,10 @@ namespace TVPFarmacia.Frontend
         private DispatcherTimer _holdTimer;
         private DispatcherTimer _repeatTimer;
         private bool _isIncrementing = false;
-        public int CantidadSeleccionada => _cantidad;
+        public decimal CantidadSeleccionada => _cantidad;
         public bool _modificar { get; set; } = false;
 
-        private int _cantidad = 1;
+        private decimal _cantidad = 1;
         private int _cantidadMax;
         MVProducto _mvCategorias;
         TpvbdContext _contexto;
@@ -157,13 +157,13 @@ namespace TVPFarmacia.Frontend
 
             }
             else if (_tipoUso.Equals("iva")){
-                _ventana.porcentajeIva.Text = _cantidad.ToString();
+                _ventana.porcentajeIva.Text = ((int)Math.Round(_cantidad)).ToString();
             }
             else
             {
                 if (!_modificar)
                 {
-                    _mvCategorias.AnyadirTicket(_cantidad, _sender);
+                    _mvCategorias.AnyadirTicket((int)Math.Round(_cantidad), _sender);
                 }
                 else
                 {
@@ -186,7 +186,7 @@ namespace TVPFarmacia.Frontend
         {
             TecladoNum teclado = new TecladoNum(txtCantidad, _cantidadMax);
             teclado.ShowDialog();
-            _cantidad = int.Parse(txtCantidad.Text);
+            _cantidad = decimal.Parse(txtCantidad.Text);
         }
 
 

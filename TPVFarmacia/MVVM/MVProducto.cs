@@ -17,26 +17,26 @@ namespace TVPFarmacia.MVVM
 {
     public class MVProducto : MVBaseCRUD<Producto>
     {
-        TpvbdContext _contexto;
-        Categoria _categoria;
-        Categoria _categoriaSeleccionada;
-        MVOfertas _mvOfertas;
-        CategoriaServicio _categoriaServicio;
-        Producto _producto;
-        ProductoServicio _productoServicio;
-        Usuario _oferta;
-        OfertaServicio _ofertaServicio;
-        WrapPanel _panelMedio;
-        StackPanel _panelTicket;
-        StackPanel _panelCategorias;
-        TextBlock _precioTotal;
-        TextBlock _precioConIva;
-        Grid _panelInferior;
-        TextBox _iva;
+        private TpvbdContext _contexto;
+        private Categoria _categoria;
+        private Categoria _categoriaSeleccionada;
+        private MVOfertas _mvOfertas;
+        private CategoriaServicio _categoriaServicio;
+        private Producto _producto;
+        private ProductoServicio _productoServicio;
+        private Usuario _oferta;
+        private OfertaServicio _ofertaServicio;
+        private WrapPanel _panelMedio;
+        private StackPanel _panelTicket;
+        private StackPanel _panelCategorias;
+        private TextBlock _precioTotal;
+        private TextBlock _precioConIva;
+        private Grid _panelInferior;
+        private TextBox _iva;
 
 
-        int it = 0;
-        decimal? precioFinal = 0;
+        private int it = 0;
+        decimal? _precioFinal = 0.00m;
         int _cantidadItem;
         private Dictionary<int, int> _stockTemporal = new Dictionary<int, int>();
         public bool _actualizarCantidad { get; set; }
@@ -70,7 +70,7 @@ namespace TVPFarmacia.MVVM
         public void LimpiarStock()
         {
             _stockTemporal.Clear();
-            precioFinal = 0;
+            _precioFinal = 0;
         }
         public Producto Clonar { get { return (Producto)_producto.Clone(); } }
 
@@ -336,15 +336,7 @@ namespace TVPFarmacia.MVVM
 
                 };
 
-                if (producto.OfertaId != null)
-                {
-                    pctjOferta = _mvOfertas.ComprobarOfertas((int)producto.OfertaId);
-                    precioFinal = (producto.Precio - (producto.Precio * pctjOferta / 100)) * cantidad;
-                }
-                else
-                {
-                    precioFinal = producto.Precio * cantidad;
-                }
+                precioFinal = CogerPrecioProducto(producto.Id) * cantidad;
                 TextBlock precio = new TextBlock()
                 {
                     Text = precioFinal.ToString() + "€",
@@ -392,18 +384,20 @@ namespace TVPFarmacia.MVVM
 
                         if (_actualizarCantidad)
                         {
-                            int nuevaCantidad = ventanaCantidad.CantidadSeleccionada;
+                            int nuevaCantidad = (int)ventanaCantidad.CantidadSeleccionada;
                             if (nuevaCantidad != cantidadAnterior)
                             {
                                 _stockTemporal.Remove(producto.Id);
                                 txtCant.Text = nuevaCantidad.ToString();
 
-                                decimal? precioAnterior = producto.Precio * cantidadAnterior;
-                                decimal? precioNuevo = producto.Precio * nuevaCantidad;
+                                decimal? precioAnterior = CogerPrecioProducto(producto.Id) * cantidadAnterior;
+                                decimal? precioNuevo = CogerPrecioProducto(producto.Id) * nuevaCantidad;
                                 precio.Text = precioNuevo.ToString() + "€";
 
                                 RegistrarStockTemporal(producto.Id, nuevaCantidad);
                                 ModificarTotal(precioNuevo - precioAnterior);
+                                precioFinal = precioNuevo;
+                                //En caso de que previamente se haya seleccionado el máximo de cantidad de un producto, se vuelve a habilitar el botón si la cantidad es menor
                                 if (nuevaCantidad < cantidadAnterior)
                                 {
                                     btn.IsEnabled = true;
@@ -462,6 +456,7 @@ namespace TVPFarmacia.MVVM
             Producto prod = new Producto();
             prod = _productoServicio.GetByIdAsync(id).Result;
             precio = prod.Precio;
+            precio = precio - (precio * _mvOfertas.ComprobarOfertas(prod.OfertaId ?? 0) / 100);
             return precio;
         }
 
@@ -495,9 +490,9 @@ namespace TVPFarmacia.MVVM
         {
             try
             {
-                precioFinal += precio;
+                _precioFinal += precio;
 
-                _precioTotal.Text = precioFinal.ToString() + "€";
+                _precioTotal.Text = _precioFinal.ToString() + "€";
 
                 _precioConIva.Text = (decimal.Parse(_precioTotal.Text.TrimEnd('€')) * (1 + decimal.Parse(_iva.Text) / 100)).ToString("0.00") + "€";
             }

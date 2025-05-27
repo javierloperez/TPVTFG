@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Org.BouncyCastle.Asn1.Mozilla;
@@ -27,7 +29,7 @@ namespace TVPFarmacia.MVVM.Base
         public List<Oferta> _listaOfertas { get; set; } = new List<Oferta>();
         public async Task CargarOfertasAsync()
         {
-            _listaOfertas = (List<Oferta>)await _ofertaServicio.GetAllAsync();
+            _listaOfertas = (await _ofertaServicio.GetAllAsync()).ToList();
             OnPropertyChanged(nameof(_listaOfertas));
         }
 
@@ -37,8 +39,8 @@ namespace TVPFarmacia.MVVM.Base
             _oferta.OfertaFin = DateTime.Now;
             _oferta.OfertaInicio = DateTime.Now;
             _ofertaServicio = new OfertaServicio(_contexto);
-            await CargarOfertasAsync();
             servicio = _ofertaServicio;
+            await CargarOfertasAsync();
 
         }
 
@@ -53,17 +55,29 @@ namespace TVPFarmacia.MVVM.Base
 
         public int ComprobarOfertas(int idOferta)
         {
-            DateTime fechaHoy = DateTime.Now;
-            Oferta oferta = new Oferta();
-            oferta = _ofertaServicio.GetByIdAsync(idOferta).Result;
-
-            if(oferta.OfertaInicio<fechaHoy && oferta.OfertaFin > fechaHoy)
+            try
             {
-            return (int)oferta.DescuentoPctj;
+                if(idOferta <= 0)
+                {
+                    return 0;
+                }
+                DateTime fechaHoy = DateTime.Now;
+                Oferta oferta = new Oferta();
+                oferta = _ofertaServicio.GetByIdAsync(idOferta).Result;
 
+                if (oferta.OfertaInicio < fechaHoy && oferta.OfertaFin > fechaHoy)
+                {
+                    return (int)oferta.DescuentoPctj;
+
+                }
+                else
+                {
+                    return 0;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                MessageBox.Show($"Error al comprobar ofertas: {ex.Message}");
                 return 0;
             }
         }

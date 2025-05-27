@@ -44,7 +44,7 @@
 
             <ScrollViewer Background="#FDFCFB">
                 <StackPanel Margin="10">
-                    <TextBlock Grid.Column="0" VerticalAlignment="Bottom" Text="Las mieles hueles S.L" Foreground="Black" FontStyle="Italic" FontSize="20" Margin="0 0 0 10" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Bottom" x:Name="nombreFarmacia" Foreground="Black" FontStyle="Italic" FontSize="20" Margin="0 0 0 10" HorizontalAlignment="Center"/>
 
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Producto" FontSize="15" />
@@ -82,7 +82,7 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Total..." FontSize="20" Margin="10 0 0 0" />
-                    <TextBlock Grid.Column="1" HorizontalAlignment="Right"  x:Name="precioTotal" FontSize="20" Margin="0 0 10 0"/>
+                    <TextBlock Grid.Column="1" HorizontalAlignment="Right"  x:Name="precioTotal"  FontSize="20" Margin="0 0 10 0"/>
                     <TextBlock Text="IVA" Grid.Row="1"  FontSize="20" Margin="10 0 0 0"/>
                     <TextBox x:Name="porcentajeIva" Text="0" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 10 0" PreviewMouseDown="porcentajeIva_PreviewMouseDown" Width="50" HorizontalAlignment="Right" HorizontalContentAlignment="Center" TextChanged="porcentajeIva_TextChanged"/>
                 </Grid>
@@ -128,7 +128,7 @@
                         </RadioButton.Content>
                     </RadioButton>
 
-                    <TextBox x:Name="cantidadRecibida" Text="0" FontSize="20" VerticalAlignment="Center" Margin="0 15 15 0" PreviewMouseDown="cantidadRecibida_PreviewMouseDown" Visibility="Hidden"  />
+                    <TextBox x:Name="cantidadRecibida" Text="0" FontSize="20" VerticalAlignment="Center" Margin="0 15 15 0" PreviewMouseDown="cantidadRecibida_PreviewMouseDown" Visibility="Hidden" Width="50" HorizontalContentAlignment="Center" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="2">
