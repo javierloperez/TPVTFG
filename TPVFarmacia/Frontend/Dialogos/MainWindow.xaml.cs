@@ -211,6 +211,7 @@ namespace TVPFarmacia.Frontend
                     precio = _mvProducto.CogerPrecioProducto(producto.Key) * cantidad;
 
                     _mvVentasProducto.InsertarVenta(producto.Key, cantidad, precio, idVenta);
+                    _mvProducto._lineasTicket.Remove(producto.Key);
                 }
                 GenerarTicket();
                 LimpiarVentana();

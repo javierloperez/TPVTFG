@@ -10,6 +10,7 @@ using TPVFarmacia.Backend.Modelos;
 using TVPFarmacia.Backend.Modelos;
 using TVPFarmacia.Backend.Servicios;
 using TVPFarmacia.Frontend;
+using TVPFarmacia.Frontend.Dialogos;
 using TVPFarmacia.MVVM.Base;
 using Button = System.Windows.Controls.Button;
 
@@ -33,6 +34,7 @@ namespace TVPFarmacia.MVVM
         private TextBlock _precioConIva;
         private Grid _panelInferior;
         private TextBox _iva;
+        public Dictionary<int, (Grid fila, TextBlock txtCant, TextBlock txtPrecio)> _lineasTicket = new Dictionary<int, (Grid, TextBlock, TextBlock)>();
 
 
         private int it = 0;
@@ -199,6 +201,19 @@ namespace TVPFarmacia.MVVM
 
             OnPropertyChanged(nameof(listaProductosFiltro));
         }
+
+        public async Task RecargarListaEliminados()
+        {
+            var productos = await _productoServicio.GetAllAsync();
+            var productosActivos = productos
+                .Where(p => p.Activado.ToLower().Equals("no"))
+                .ToList();
+
+            _listaProductosParaFiltro = new ListCollectionView(productosActivos);
+            _listaProductosParaFiltro.Filter = predicadoFiltro;
+
+            OnPropertyChanged(nameof(listaProductosFiltro));
+        }
         public void ListadoCategorias(StackPanel panelCategorias)
         {
             foreach (var item in _listaCategorias)
@@ -290,17 +305,38 @@ namespace TVPFarmacia.MVVM
 
         public async Task AnyadirTicket(int cantidad, object sender)
         {
+            decimal? precioFinal;
 
             if (sender is Button btn && btn.Tag is Producto producto)
             {
-                int pctjOferta;
-                decimal? precioFinal;
+                if (_lineasTicket.ContainsKey(producto.Id))
+                {
+                    // Ya existe: actualizamos
+                    var (filaExistente, txtCant, txtPrecio) = _lineasTicket[producto.Id];
+                    int cantidadAnterior = int.Parse(txtCant.Text);
+                    int nuevaCantidad = cantidadAnterior + cantidad;
+
+                    txtCant.Text = nuevaCantidad.ToString();
+
+                    decimal? precioAnterior = CogerPrecioProducto(producto.Id) * cantidadAnterior;
+                    decimal? precioNuevo = CogerPrecioProducto(producto.Id) * nuevaCantidad;
+
+                    txtPrecio.Text = precioNuevo.ToString() + "€";
+                    _stockTemporal.Remove(producto.Id);
+
+                    RegistrarStockTemporal(producto.Id, nuevaCantidad);
+                    ModificarTotal(precioNuevo - precioAnterior);
+                    // Desactivar el botón si ya no se puede añadir más
+                    btn.IsEnabled = (producto.Cantidad - nuevaCantidad) > 0;
+
+                    return;
+                }
                 Grid fila = new Grid();
                 ColumnDefinition izquierda = new ColumnDefinition();
                 ColumnDefinition derecha = new ColumnDefinition();
                 ColumnDefinition extraBtn = new ColumnDefinition();
 
-                izquierda.Width = new GridLength(2.8, GridUnitType.Star);
+                izquierda.Width = new GridLength(3, GridUnitType.Star);
                 derecha.Width = new GridLength(1.2, GridUnitType.Star);
                 extraBtn.Width = new GridLength(0.9, GridUnitType.Star);
 
@@ -314,7 +350,7 @@ namespace TVPFarmacia.MVVM
                     Text = producto.Descripcion,
                     TextTrimming = TextTrimming.CharacterEllipsis,
                     FontSize = 15,
-
+                    Margin = new Thickness(0,0,40,0)
 
                 };
 
@@ -331,11 +367,21 @@ namespace TVPFarmacia.MVVM
                     FontSize = 15,
                     HorizontalAlignment = HorizontalAlignment.Right,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(0, 0, 0, 0),
+                    Margin = new Thickness(0, 0, 5, 0),
                     Tag = btn.Tag
 
                 };
 
+                PackIcon icono = new PackIcon
+                {
+                    Kind = PackIconKind.Edit,
+                    Width = 22,
+                    Height = 22,
+                    Foreground = Brushes.LightSkyBlue,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0, 0, -10, 0)
+                };
                 precioFinal = CogerPrecioProducto(producto.Id) * cantidad;
                 TextBlock precio = new TextBlock()
                 {
@@ -345,12 +391,14 @@ namespace TVPFarmacia.MVVM
                     VerticalAlignment = VerticalAlignment.Center,
                 };
 
+
+
                 Button btnEliminar = new Button
                 {
 
                     Background = Brushes.Transparent,
                     BorderBrush = Brushes.Transparent,
-                    ToolTip = "Eliminar",
+                    ToolTip = "Editar",
                     Content = new PackIcon
                     {
                         Kind = PackIconKind.CloseCircle,
@@ -358,22 +406,28 @@ namespace TVPFarmacia.MVVM
                         Height = 24,
                         Foreground = Brushes.Red
                     },
-                    Tag = btn.Tag,
+
                 };
 
                 btnEliminar.Click += (sender, e) =>
                 {
-
+                    var (filaExistente, txtCant, txtPrecio) = _lineasTicket[producto.Id];
                     _panelTicket.Children.Remove(fila);
                     _stockTemporal.Remove(producto.Id);
-                    ModificarTotal(precioFinal * -1);
+                    _lineasTicket.Remove(producto.Id);
+
+
+                    ModificarTotal(decimal.Parse(txtPrecio.Text.TrimEnd('€')) * -1);
                     btn.IsEnabled = true;
+
                 };
 
                 cant.Click += async (sender, e) =>
                 {
                     if (sender is Button btnClick && btnClick.Tag is Producto producto)
                     {
+
+
                         TextBlock txtCant = (TextBlock)btnClick.Content;
                         int cantidadAnterior = int.Parse(txtCant.Text);
 
@@ -381,6 +435,7 @@ namespace TVPFarmacia.MVVM
                         VentanaCantidad ventanaCantidad = new VentanaCantidad(_contexto, btnClick, this, cantidadAnterior);
                         ventanaCantidad._modificar = true;
                         ventanaCantidad.ShowDialog();
+
 
                         if (_actualizarCantidad)
                         {
@@ -397,6 +452,7 @@ namespace TVPFarmacia.MVVM
                                 RegistrarStockTemporal(producto.Id, nuevaCantidad);
                                 ModificarTotal(precioNuevo - precioAnterior);
                                 precioFinal = precioNuevo;
+                                _lineasTicket[producto.Id] = (fila, txtCant, precio);
                                 //En caso de que previamente se haya seleccionado el máximo de cantidad de un producto, se vuelve a habilitar el botón si la cantidad es menor
                                 if (nuevaCantidad < cantidadAnterior)
                                 {
@@ -405,6 +461,8 @@ namespace TVPFarmacia.MVVM
 
                             }
                         }
+
+
                     }
                 };
 
@@ -415,12 +473,16 @@ namespace TVPFarmacia.MVVM
 
                 fila.Children.Add(precio);
                 fila.Children.Add(cant);
+                fila.Children.Add(icono);
                 fila.Children.Add(btnEliminar);
                 Grid.SetColumn(nombre, 0);
                 Grid.SetColumn(cant, 0);
+                Grid.SetColumn(icono, 0);
                 Grid.SetColumn(precio, 1);
                 Grid.SetColumn(btnEliminar, 2);
                 _panelTicket.Children.Add(fila);
+                _lineasTicket[producto.Id] = (fila, (TextBlock)cant.Content, precio);
+
                 RegistrarStockTemporal(producto.Id, cantidad);
                 ModificarTotal(precioFinal);
 
@@ -462,14 +524,24 @@ namespace TVPFarmacia.MVVM
 
         public string CogerNombreProducto(int id)
         {
-            
+
             Producto prod = new Producto();
             prod = _productoServicio.GetByIdAsync(id).Result;
-            
+
             return prod.Descripcion;
         }
 
-
+        public async void CambiarTipoLista(string tipo)
+        {
+            if (tipo.Equals("Eliminados"))
+            {
+                await RecargarListaEliminados();
+            }
+            else
+            {
+                await RecargarListaProductosAsync();
+            }
+        }
         public int ObtenerStockDisponible(int idProducto, int stockOriginal)
         {
             if (_stockTemporal.ContainsKey(idProducto))

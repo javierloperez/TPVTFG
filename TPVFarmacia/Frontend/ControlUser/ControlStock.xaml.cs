@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using MahApps.Metro.Controls;
+using MaterialDesignThemes.Wpf;
 using TVPFarmacia.Backend.Modelos;
 using TVPFarmacia.Frontend.Dialogos;
 using TVPFarmacia.MVVM;
@@ -31,7 +34,7 @@ namespace TVPFarmacia.Frontend.ControlUser
         private MVOfertas _mvOfertas;
         private MVCategoria _mvCategoria;
         private MainWindow _ventana;
-
+        private string _tipoLista = "Activos";
         /// <summary>
         /// Constructor de la clase ControlStock
         /// </summary>
@@ -39,7 +42,7 @@ namespace TVPFarmacia.Frontend.ControlUser
         /// <param name="mvOfertas">Mv de oferta</param>
         /// <param name="mvCategoria">Mv de categoria</param>
         /// <param name="ventana">La ventana principal MainWindow</param>
-        public ControlStock(MVProducto mvProducto, MVOfertas mvOfertas, MVCategoria mvCategoria,MainWindow ventana)
+        public ControlStock(MVProducto mvProducto, MVOfertas mvOfertas, MVCategoria mvCategoria, MainWindow ventana)
         {
             InitializeComponent();
             _mvProducto = mvProducto;
@@ -57,7 +60,7 @@ namespace TVPFarmacia.Frontend.ControlUser
         /// <param name="e"></param>
         private void AgregarProducto_Click(object sender, RoutedEventArgs e)
         {
-            AgregarProducto ap = new AgregarProducto(_mvProducto, false,_ventana);
+            AgregarProducto ap = new AgregarProducto(_mvProducto, false, _ventana);
             ap.ShowDialog();
         }
 
@@ -79,7 +82,7 @@ namespace TVPFarmacia.Frontend.ControlUser
         /// <param name="e"></param>
         private void AgregarCategoria_Click(object sender, RoutedEventArgs e)
         {
-            AgregarCategoria ac = new AgregarCategoria(_mvCategoria,_mvProducto);
+            AgregarCategoria ac = new AgregarCategoria(_mvCategoria, _mvProducto);
             ac.ShowDialog();
         }
 
@@ -90,20 +93,49 @@ namespace TVPFarmacia.Frontend.ControlUser
         /// <param name="e"></param>
         private void btnBorrar_Click(object sender, RoutedEventArgs e)
         {
-            _mvProducto._crearProducto = (Producto)dgAñadirProducto.SelectedItem;
-
-            _mvProducto._crearProducto.Activado = "no";
-
-            if (_mvProducto.actualizar)
+            if (sender is Button btn && btn.Content is PackIcon icono)
             {
-                MessageBox.Show("Producto eliminado correctamente", "Gestión productosW");
-            }
-            else
-            {
-                MessageBox.Show("Error al intentar eliminar producto", "Gestión productos");
-            }
+                if (_tipoLista.Equals("Eliminados"))
+                {
+                    _tipoLista = "Activos";
+                    _mvProducto._crearProducto = (Producto)dgAñadirProducto.SelectedItem;
+                    _mvProducto._crearProducto.Activado = "si";
 
-            _mvProducto._crearProducto = new Producto();
+                    if (_mvProducto.actualizar)
+                    {
+                        MessageBox.Show("Producto restaurado correctamente", "Gestión productos");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error al intentar restaurar producto", "Gestión productos");
+                    }
+
+                    _mvProducto._crearProducto = new Producto();
+                    icono.Kind = PackIconKind.Delete;
+                    icono.Foreground = Brushes.Red;
+                    verEliminados.Content = "Eliminados";
+                }
+                else
+                {
+
+                    _mvProducto._crearProducto = (Producto)dgAñadirProducto.SelectedItem;
+
+                    _mvProducto._crearProducto.Activado = "no";
+
+                    if (_mvProducto.actualizar)
+                    {
+                        MessageBox.Show("Producto eliminado correctamente", "Gestión productos");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error al intentar eliminar producto", "Gestión productos");
+                    }
+
+                    _mvProducto._crearProducto = new Producto();
+                   
+
+                }
+            }
 
 
         }
@@ -114,21 +146,21 @@ namespace TVPFarmacia.Frontend.ControlUser
         /// <param name="e"></param>
         private void btnEditar_Click(object sender, RoutedEventArgs e)
         {
-            _mvProducto._crearProducto= (Producto)dgAñadirProducto.SelectedItem;
+            _mvProducto._crearProducto = (Producto)dgAñadirProducto.SelectedItem;
 
             Producto articuloAux = _mvProducto.Clonar;
-            AgregarProducto ap = new AgregarProducto(_mvProducto,true,_ventana);
+            AgregarProducto ap = new AgregarProducto(_mvProducto, true, _ventana);
             ap.ShowDialog();
 
             if (ap.DialogResult.Equals(true))
             {
                 dgAñadirProducto.Items.Refresh();
-                _mvProducto._crearProducto= new Producto();
-                
+                _mvProducto._crearProducto = new Producto();
+
             }
             else
             {
-                _mvProducto._crearProducto= articuloAux;
+                _mvProducto._crearProducto = articuloAux;
                 dgAñadirProducto.SelectedItem = articuloAux;
                 _mvProducto._crearProducto = new Producto();
             }
@@ -151,6 +183,71 @@ namespace TVPFarmacia.Frontend.ControlUser
         private void cbCategoria_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _mvProducto.Filtrar();
+        }
+
+        private void dgAñadirProducto_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                var row = e.Row;
+                var btnBorrar = FindChildByName<Button>(row, "btnBorrar");
+                if (btnBorrar != null)
+                {
+                    var icono = FindChildByName<PackIcon>(btnBorrar, "iconoBorrar");
+                    if (icono != null)
+                    {
+                        if (_tipoLista.Equals("Activos"))
+                        {
+                            icono.Kind = PackIconKind.Delete;
+                            icono.Foreground = Brushes.Red;
+                        }
+                        else
+                        {
+                            icono.Kind = PackIconKind.Restore;
+                            icono.Foreground = Brushes.Green;
+                        }
+                    }
+                }
+            }, DispatcherPriority.Background);
+        }
+
+
+        public static T FindChildByName<T>(DependencyObject parent, string childName) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is FrameworkElement fe && fe.Name == childName)
+                    return (T)child;
+
+                var result = FindChildByName<T>(child, childName);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
+        private void verEliminados_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (verEliminados.Content.Equals("Eliminados"))
+            {
+                verEliminados.Content = "Activos";
+                _tipoLista = "Eliminados";
+                _mvProducto.CambiarTipoLista("Eliminados");
+
+            }
+            else
+            {
+                verEliminados.Content = "Eliminados";
+                _tipoLista = "Activos";
+                _mvProducto.CambiarTipoLista("Activos");
+            }
+
         }
     }
 }
