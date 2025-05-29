@@ -13,7 +13,7 @@
 
             <TextBlock Text="Listado de Clientes" Margin="20 0 20 0" FontSize="20"/>
 
-            <Button x:Name="AgregarCliente" Content="Nuevo Cliente" Style="{StaticResource MaterialDesignFlatButton}" Click="AgregarCliente_Click" VerticalAlignment="Center"/>
+            <Button x:Name="AgregarCliente" Content="Nuevo Cliente" Style="{StaticResource MaterialDesignFlatButton}" Click="AgregarCliente_Click" VerticalAlignment="Center" Foreground="HotPink"/>
 
             <TextBox Width="150" BorderThickness="1" Height="30"  x:Name="txtBuscarNombre" TextChanged="txtBuscarNombre_TextChanged" Text="{Binding filtroNombre, UpdateSourceTrigger=PropertyChanged}" Margin="20,0,0,0"  mat:TextFieldAssist.HasClearButton="True" mat:HintAssist.Hint="Buscar por nombre" VerticalAlignment="Center" Padding="10 0 0 0" />
 

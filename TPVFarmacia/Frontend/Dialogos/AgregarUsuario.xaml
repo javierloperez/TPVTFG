@@ -28,11 +28,11 @@
    
         <TextBlock  Text="Los campos con asterisco son obligatorios" FontWeight="Black" FontSize="15" Margin="20 10 0 0"/>
 
-        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Text="DATOS DEL USUARIO" FontStyle="Italic" Style="{StaticResource MaterialDesignButtonTextBlock}" Foreground="DarkMagenta" FontSize="30" />
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Text="DATOS DEL USUARIO" FontStyle="Italic" Style="{StaticResource MaterialDesignButtonTextBlock}" Foreground="HotPink" FontSize="30"  />
 
         <Separator Margin="15 20 15 0 " Grid.Row="1" Grid.ColumnSpan="2"/>
 
-        <TextBox Grid.Row="2"  mat:HintAssist.Hint="Nombre del usuario *" Text="{Binding _crearUsuario.Nombre, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"  Height="60"  x:Name="tbNombre" FontSize="20" FontWeight="Bold"  Width="360"/>
+        <TextBox Grid.Row="2"  mat:HintAssist.Hint="Nombre del usuario *" Text="{Binding _crearUsuario.Nombre, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"  Height="60"  x:Name="tbNombre" FontSize="20" FontWeight="Bold"  Width="360" />
 
 
 
@@ -45,12 +45,12 @@
 
         <TextBox Grid.Row="3" Grid.Column="1"  mat:HintAssist.Hint="Contraseña del login *" Text="{Binding _crearUsuario.Password, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"  Height="60"  x:Name="tbPassword" FontSize="20" FontWeight="Bold"  Width="360"/>
 
-        <TextBox Grid.Row="4" Grid.ColumnSpan="2" mat:HintAssist.Hint="Número de teléfono *" Text="{Binding _crearUsuario.Telefono, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" x:Name="tbTelefono" FontSize="20" FontWeight="Bold" MaxLength="9" Width="360" Height="60" />
+        <TextBox Grid.Row="4" Grid.ColumnSpan="2" mat:HintAssist.Hint="Número de teléfono *" Text="{Binding _crearUsuario.Telefono, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" x:Name="tbTelefono" FontSize="20" FontWeight="Bold" MaxLength="9"   Width="360" Height="60" PreviewTextInput="tbTelefono_PreviewTextInput"/>
 
 
-        <Button  Content="Cancelar" Grid.Row="5" Grid.ColumnSpan="2" Margin="0 0 250 0" Height="50" Width="125" HorizontalAlignment="Right" BorderBrush="Transparent" x:Name="btnCancelar" Click="btnCancelar_Click" />
+        <Button  Content="Cancelar" Grid.Row="5" Grid.ColumnSpan="2" Margin="0 0 250 0" Height="50" Width="125" HorizontalAlignment="Right" BorderBrush="Transparent" x:Name="btnCancelar" Click="btnCancelar_Click" Background="HotPink" />
 
-        <Button Grid.Column="1" Grid.Row="5" Background="Transparent" Style="{StaticResource MaterialDesignOutlinedButton}"  Height="50" Width="125" Content="Guardar" HorizontalAlignment="Right" Margin="0 0 60 0" x:Name="btnGuardar" Click="btnGuardar_Click" />
+        <Button Grid.Column="1" Grid.Row="5" Background="Transparent" Style="{StaticResource MaterialDesignOutlinedButton}"  Height="50" Width="125" Content="Guardar" HorizontalAlignment="Right" Margin="0 0 60 0" x:Name="btnGuardar" Click="btnGuardar_Click"  BorderBrush="HotPink" />
 
     </Grid>
 </mah:MetroWindow>

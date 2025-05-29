@@ -157,7 +157,7 @@ namespace TVPFarmacia.Frontend
 
             }
             else if (_tipoUso.Equals("iva")){
-                _ventana.porcentajeIva.Text = ((int)Math.Round(_cantidad)).ToString();
+                _ventana.porcentajeIva.Text = ((int)Math.Round(_cantidad)).ToString()+"%";
             }
             else
             {

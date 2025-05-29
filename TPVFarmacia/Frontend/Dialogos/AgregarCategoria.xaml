@@ -28,17 +28,17 @@
         </Grid>
         <TextBlock  Text="Los campos con asterisco son obligatorios" FontWeight="Black" FontSize="15" Margin="20 10 0 0"/>
 
-        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Text="DATOS DE LA CATEGORIA" FontStyle="Italic" Style="{StaticResource MaterialDesignButtonTextBlock}" Foreground="DarkMagenta" FontSize="30" />
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Text="DATOS DE LA CATEGORIA" FontStyle="Italic" Style="{StaticResource MaterialDesignButtonTextBlock}" Foreground="HotPink" FontSize="30" />
 
         <Separator Margin="15 20 15 0 " Grid.Row="1" Grid.ColumnSpan="2"/>
 
         <TextBox Grid.Row="2"  mat:HintAssist.Hint="Nombre de la categoria *" Text="{Binding _crearCategoria.Categoria1, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"  Height="60"  x:Name="tbNombre" FontSize="20" FontWeight="Bold" MaxLength="50" Width="360"/>
 
-        <Button Grid.Column="1" Grid.Row="2" Content="Seleccionar imagen" x:Name="btnImagen" FontSize="20" Height="60" Width="300" HorizontalAlignment="Center" Click="btnImagen_Click"/>
-        
-        <Button  Content="Cancelar" Grid.Row="3" Grid.ColumnSpan="2" Margin="0 0 250 0" Height="50" Width="125" HorizontalAlignment="Right" BorderBrush="Transparent" x:Name="btnCancelar" Click="btnCancelar_Click" />
+        <Button Grid.Column="1" Grid.Row="2" Content="Seleccionar imagen" x:Name="btnImagen" FontSize="20" Height="60" Width="300" HorizontalAlignment="Center" Click="btnImagen_Click" Background="HotPink"/>
 
-        <Button Grid.Column="1" Grid.Row="3" Background="Transparent" Style="{StaticResource MaterialDesignOutlinedButton}"  Height="50" Width="125" Content="Guardar" HorizontalAlignment="Right" Margin="0 0 60 0" x:Name="btnGuardar" Click="btnGuardar_Click"/>
+        <Button  Content="Cancelar" Grid.Row="3" Grid.ColumnSpan="2" Margin="0 0 250 0" Height="50" Width="125" HorizontalAlignment="Right" BorderBrush="Transparent" x:Name="btnCancelar" Click="btnCancelar_Click" Background="HotPink" />
+
+        <Button Grid.Column="1" Grid.Row="3" Background="Transparent" Style="{StaticResource MaterialDesignOutlinedButton}"  Height="50" Width="125" Content="Guardar" HorizontalAlignment="Right" Margin="0 0 60 0" x:Name="btnGuardar" Click="btnGuardar_Click" BorderBrush="HotPink"/>
 
 
     </Grid>

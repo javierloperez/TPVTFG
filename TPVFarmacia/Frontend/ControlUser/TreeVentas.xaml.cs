@@ -63,6 +63,7 @@ namespace TVPFarmacia.Frontend.ControlUser
                     }).ToList();
 
                 dgProductos.ItemsSource = productos;
+                
             }
         }
         private async void EliminarVenta_Click(object sender, RoutedEventArgs e)

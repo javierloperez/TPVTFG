@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 using TVPFarmacia.Frontend.ControlUser;
 using TVPFarmacia.MVVM;
 
@@ -19,7 +20,7 @@ namespace TVPFarmacia.Frontend.Dialogos
     /// <summary>
     /// Clase que muestra una ventana con un arbol de ventas y clientes asociados.
     /// </summary>
-    public partial class ListaVentas : Window
+    public partial class ListaVentas : MetroWindow
     {
         /// <summary>
         /// Constructor de la clase ListaVentas.

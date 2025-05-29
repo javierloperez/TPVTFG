@@ -31,7 +31,7 @@
         </Grid>
         <TextBlock  Text="Los campos con asterisco son obligatorios" FontWeight="Black" FontSize="15" Margin="20 10 0 0"/>
 
-        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Text="DATOS DEL PRODUCTO" FontStyle="Italic" Style="{StaticResource MaterialDesignButtonTextBlock}" Foreground="DarkMagenta" FontSize="30" />
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Text="DATOS DEL PRODUCTO" FontStyle="Italic" Style="{StaticResource MaterialDesignButtonTextBlock}" Foreground="HotPink" FontSize="30" />
 
         <Separator Margin="15 20 15 0 " Grid.Row="1" Grid.ColumnSpan="2"/>
 
@@ -41,12 +41,12 @@
 
         <StackPanel Grid.Row="3" VerticalAlignment="Center">
             <TextBlock Text="Cantidad *" FontSize="20" FontStyle="Italic" HorizontalAlignment="Center" Foreground="Gray" Margin="0 0 0 0"/>
-            <xctk:IntegerUpDown VerticalAlignment="Center" x:Name="nupCantidad"  Minimum="0" Text="{Binding _crearProducto.Cantidad, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" FontSize="20" HorizontalAlignment="Center" Width="180" Background="MistyRose" Height="60" BorderBrush="Purple" />
+            <xctk:IntegerUpDown VerticalAlignment="Center" x:Name="nupCantidad"  Minimum="0" Text="{Binding _crearProducto.Cantidad, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" FontSize="20" HorizontalAlignment="Center" Width="180" Background="MistyRose" Height="60" BorderBrush="HotPink" />
         </StackPanel>
 
         <StackPanel Grid.Row="3" Grid.Column="1" VerticalAlignment="Center">
             <TextBlock Text="Precio *" FontSize="20" FontStyle="Italic" HorizontalAlignment="Center" Foreground="Gray" Margin="0 0 0 0"/>
-            <xctk:DoubleUpDown Grid.Row="3" Grid.Column="1" Value="{Binding _crearProducto.Precio, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" x:Name="nupPrecio" FontSize="20" HorizontalAlignment="Center" Width="180" Height="60" Minimum="0" Background="MistyRose" FormatString="C" CultureInfo="es-ES" BorderBrush="Purple"/>
+            <xctk:DoubleUpDown Grid.Row="3" Grid.Column="1" Value="{Binding _crearProducto.Precio, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" x:Name="nupPrecio" FontSize="20" HorizontalAlignment="Center" Width="180" Height="60" Minimum="0" Background="MistyRose" FormatString="C" CultureInfo="es-ES" BorderBrush="HotPink"/>
 
         </StackPanel>
 
@@ -56,12 +56,12 @@
 
         <ComboBox Grid.Column="1" Grid.Row="4" SelectedItem="{Binding _crearProducto.Oferta, ValidatesOnDataErrors=True,NotifyOnValidationError=True}"  ItemsSource="{Binding _listaOfertas}" DisplayMemberPath="Descripcion" mat:HintAssist.Hint="Selecciona una oferta " x:Name="cbOferta" FontSize="20" Width="360" Padding="0 0 0 5" Height="60" />
 
-        
-        <Button Grid.ColumnSpan="2" Grid.Row="5" Content="Seleccionar imagen" x:Name="btnImagen" FontSize="20" Height="60" Width="300" HorizontalAlignment="Center" Click="btnImagen_Click"/>
 
-        <Button  Content="Cancelar" Grid.Row="6" Grid.ColumnSpan="2" Margin="0 0 250 0" Height="50" Width="125" HorizontalAlignment="Right" BorderBrush="Transparent" x:Name="btnCancelar" Click="btnCancelar_Click" />
+        <Button Grid.ColumnSpan="2" Grid.Row="5" Content="Seleccionar imagen" x:Name="btnImagen" FontSize="20" Height="60" Width="300" HorizontalAlignment="Center" Click="btnImagen_Click" Background="HotPink"/>
 
-        <Button Grid.Column="1" Grid.Row="6" Background="Transparent" Style="{StaticResource MaterialDesignOutlinedButton}"  Height="50" Width="125" Content="Guardar" HorizontalAlignment="Right" Margin="0 0 60 0" x:Name="btnGuardar" Click="btnGuardar_Click" />
+        <Button  Content="Cancelar" Grid.Row="6" Grid.ColumnSpan="2" Margin="0 0 250 0" Height="50" Width="125" HorizontalAlignment="Right" BorderBrush="Transparent" x:Name="btnCancelar" Click="btnCancelar_Click" Background="HotPink"/>
+
+        <Button Grid.Column="1" Grid.Row="6" Background="Transparent" Style="{StaticResource MaterialDesignOutlinedButton}"  Height="50" Width="125" Content="Guardar" HorizontalAlignment="Right" Margin="0 0 60 0" x:Name="btnGuardar" Click="btnGuardar_Click" BorderBrush="HotPink" />
 
 
 

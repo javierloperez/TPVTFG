@@ -16,7 +16,7 @@
                    Margin="0,0,0,15"/>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
-            <Button x:Name="btnRestar" Width="50" Height="50" FontSize="20" Cursor="Hand">
+            <Button x:Name="btnRestar" Width="50" Height="50" FontSize="20" Cursor="Hand" BorderBrush="Transparent" Background="HotPink" >
                 <mat:PackIcon Kind="Minus"/>
             </Button>
 
@@ -29,14 +29,14 @@
                        Margin="10,0" PreviewMouseDown="txtCantidad_GotFocus"  />
 
 
-            <Button x:Name="btnSumar" Width="50" Height="50" FontSize="20">
+            <Button x:Name="btnSumar" Width="50" Height="50" FontSize="20" BorderBrush="Transparent" Background="HotPink">
                 <mat:PackIcon Kind="Plus"/>
             </Button>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Cancelar" Width="100" Margin="5" Click="btnCancelar_Click"/>
-            <Button Content="Guardar" Width="100" Margin="5" Click="btnGuardar_Click" IsDefault="True"/>
+            <Button Content="Cancelar" Width="100" Margin="5" Click="btnCancelar_Click" BorderBrush="Transparent" Background="HotPink"/>
+            <Button Content="Guardar" Width="100" Margin="5" Click="btnGuardar_Click" IsDefault="True" BorderBrush="Transparent" Background="HotPink"/>
         </StackPanel>
 
     </StackPanel>

@@ -68,5 +68,10 @@ namespace TPVFarmacia.Frontend.Dialogos
             _mvUsuario._crearUsuario = new Usuario();
             this.Close();
         }
+
+        private void tbTelefono_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = e.Text.ToString().All(char.IsDigit) == false;
+        }
     }
 }

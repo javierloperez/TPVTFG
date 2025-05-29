@@ -34,7 +34,7 @@ namespace TVPFarmacia.Frontend
         private MVUsuario _mvUsuario;
         private string _tipoPago; // Tipo de pago seleccionado (efectivo o tarjeta)
         private Cliente _clienteElegido;
-        private readonly string _nombreFarmacia = "Las mieles hueles S.L";
+        private readonly string _nombreFarmacia = "Los geles hueles S.L";
 
         /// <summary>
         /// Constructor de la clase MainWindow.
@@ -170,6 +170,8 @@ namespace TVPFarmacia.Frontend
                         cantidadRecibida.Visibility = Visibility.Hidden;
                         totalADevolver.Visibility = Visibility.Hidden;
                         mensaje.Visibility = Visibility.Hidden;
+                        cantidadRecibida.Text = "0€";
+                        totalADevolver.Text = "0€";
                     }
                 }
 
@@ -197,7 +199,7 @@ namespace TVPFarmacia.Frontend
             try
             {
                 int idVenta = 0;
-                idVenta = _mvVentas.AgregarVenta(_clienteElegido, decimal.Parse(precioConIva.Text.TrimEnd('€')), _usuario, _tipoPago, decimal.Parse(porcentajeIva.Text));
+                idVenta = _mvVentas.AgregarVenta(_clienteElegido, decimal.Parse(precioConIva.Text.TrimEnd('€')), _usuario, _tipoPago, decimal.Parse(porcentajeIva.Text.TrimEnd('%')));
                 if (idVenta <= 0)
                 {
                     return;
@@ -290,9 +292,9 @@ namespace TVPFarmacia.Frontend
                 gfx.DrawString("TOTAL SIN IVA:", boldFont, XBrushes.Black, xPrecio - 100, y, XStringFormats.TopRight);
                 gfx.DrawString($"{total:C}", boldFont, XBrushes.Black, xPrecio, y, XStringFormats.TopRight);
                 y += 20;
-                total = total + (total * int.Parse(porcentajeIva.Text) / 100);
+                total = total + (total * int.Parse(porcentajeIva.Text.TrimEnd('%')) / 100);
                 gfx.DrawString("IVA:", boldFont, XBrushes.Black, xPrecio - 100, y, XStringFormats.TopRight);
-                gfx.DrawString($"{porcentajeIva.Text}%", boldFont, XBrushes.Black, xPrecio, y, XStringFormats.TopRight);
+                gfx.DrawString($"{porcentajeIva.Text}", boldFont, XBrushes.Black, xPrecio, y, XStringFormats.TopRight);
 
                 y += 20;
 
@@ -330,7 +332,7 @@ namespace TVPFarmacia.Frontend
         {
             try
             {
-                precioConIva.Text = (decimal.Parse(precioTotal.Text.TrimEnd('€')) * (1 + decimal.Parse(porcentajeIva.Text) / 100)).ToString("0.00") + "€";
+                precioConIva.Text = (decimal.Parse(precioTotal.Text.TrimEnd('€')) * (1 + decimal.Parse(porcentajeIva.Text.TrimEnd('%')) / 100)).ToString("0.00") + "€";
             }
             catch (Exception ex)
             {
@@ -342,15 +344,15 @@ namespace TVPFarmacia.Frontend
         {
             _mvProducto.LimpiarStock();
             panelTicket.Children.Clear();
-            porcentajeIva.Text = "0";
+            porcentajeIva.Text = "0%";
             precioConIva.Text = string.Empty;
             _tipoPago = string.Empty;
             _clienteElegido = new Cliente();
             totalADevolver.Text = string.Empty;
-            precioTotal.Text = "0";
+            precioTotal.Text = "0€";
             txtNombreCliente.Text = string.Empty;
             cbCliente.SelectedIndex = 0;
-            cantidadRecibida.Text = "0";
+            cantidadRecibida.Text = "0€";
             efectivo.IsChecked = false;
             tarjeta.IsChecked = false;
             cantidadRecibida.Visibility = Visibility.Hidden;

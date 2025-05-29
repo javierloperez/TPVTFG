@@ -566,7 +566,7 @@ namespace TVPFarmacia.MVVM
 
                 _precioTotal.Text = _precioFinal.ToString() + "€";
 
-                _precioConIva.Text = (decimal.Parse(_precioTotal.Text.TrimEnd('€')) * (1 + decimal.Parse(_iva.Text) / 100)).ToString("0.00") + "€";
+                _precioConIva.Text = (decimal.Parse(_precioTotal.Text.TrimEnd('€')) * (1 + decimal.Parse(_iva.Text.TrimEnd('%')) / 100)).ToString("0.00") + "€";
             }
             catch (Exception ex)
             {

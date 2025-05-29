@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 using TVPFarmacia.MVVM.Base;
 
 namespace TVPFarmacia.Backend.Modelos;
@@ -12,6 +9,7 @@ public partial class Usuario : PropertyChangedDataError
 {
     [Key]
     [Column("ID")]
+   
     public int Id { get; set; }
 
     [StringLength(50)]

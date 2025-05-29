@@ -133,9 +133,10 @@ namespace TVPFarmacia.Frontend.ControlUser
 
                     _mvProducto._crearProducto = new Producto();
                    
-
+                    
                 }
             }
+            _ventana.panelMedio.Children.Clear();
 
 
         }

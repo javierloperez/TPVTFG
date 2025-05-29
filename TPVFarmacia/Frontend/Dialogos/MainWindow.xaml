@@ -84,9 +84,9 @@
                     <TextBlock Text="Total..." FontSize="20" Margin="10 0 0 0" />
                     <TextBlock Grid.Column="1" HorizontalAlignment="Right"  x:Name="precioTotal"  FontSize="20" Margin="0 0 10 0"/>
                     <TextBlock Text="IVA" Grid.Row="1"  FontSize="20" Margin="10 0 0 0"/>
-                    <TextBox x:Name="porcentajeIva" Text="0" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 10 0" PreviewMouseDown="porcentajeIva_PreviewMouseDown" Width="50" HorizontalAlignment="Right" HorizontalContentAlignment="Center" TextChanged="porcentajeIva_TextChanged"/>
+                    <TextBox x:Name="porcentajeIva" Text="0%" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 10 0" PreviewMouseDown="porcentajeIva_PreviewMouseDown" Width="50" HorizontalAlignment="Right" HorizontalContentAlignment="Center" TextChanged="porcentajeIva_TextChanged"/>
                 </Grid>
-                <Button x:Name="Calculadora" Grid.Row="1" Click="Calculadora_Click" Height="150" VerticalAlignment="Bottom">
+                <Button x:Name="Calculadora" Grid.Row="1" Click="Calculadora_Click" Height="150" VerticalAlignment="Bottom" Background="#00B2CA" BorderBrush="CornflowerBlue">
                     <Button.Content>
                         <Image Source="/Iconos/Calculadora.png" />
 
@@ -106,7 +106,7 @@
                     <TextBlock x:Name="precioConIva" FontSize="20" Margin="0 15 0 0" />
 
                     <TextBlock x:Name="mensaje" Text="Cantidad a devolver:" FontSize="20" Margin="0 40 0 0" Visibility="Hidden"/>
-                    <TextBlock x:Name="totalADevolver" FontSize="20" Margin="0 15 0 0" Visibility="Hidden"/>
+                    <TextBlock x:Name="totalADevolver" Text="0€" FontSize="20" Margin="0 15 0 0" Visibility="Hidden"/>
                 </StackPanel>
 
                 <StackPanel Margin="30 10 0 0" Grid.Column="1">
@@ -128,7 +128,7 @@
                         </RadioButton.Content>
                     </RadioButton>
 
-                    <TextBox x:Name="cantidadRecibida" Text="0" FontSize="20" VerticalAlignment="Center" Margin="0 15 15 0" PreviewMouseDown="cantidadRecibida_PreviewMouseDown" Visibility="Hidden" Width="50" HorizontalContentAlignment="Center" />
+                    <TextBox x:Name="cantidadRecibida" Text="0€" FontSize="20" VerticalAlignment="Center" Margin="0 15 15 0" PreviewMouseDown="cantidadRecibida_PreviewMouseDown" Visibility="Hidden" Width="50" HorizontalContentAlignment="Center" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="2">
@@ -137,10 +137,10 @@
                     <TextBlock x:Name="txtNombreCliente" Text="Cliente: " FontSize="20" Margin="0 20 0 0" HorizontalAlignment="Center"/>
 
 
-                    <Button Content="Nuevo cliente" Margin="15 30 15 15" FontSize="25" x:Name="añadirCliente" Click="añadirCliente_Click" HorizontalContentAlignment="Center" Height="60"/>
+                    <Button Content="Nuevo cliente" Margin="15 30 15 15" FontSize="25" x:Name="añadirCliente" Click="añadirCliente_Click" HorizontalContentAlignment="Center" Height="60" Background="#00B2CA" BorderBrush="CornflowerBlue"/>
                 </StackPanel>
 
-                <Button Content="Cobrar" FontSize="25" x:Name="añadirVenta" Click="añadirVenta_Click" HorizontalContentAlignment="Center" Grid.Column="3" Height="235"/>
+                <Button Content="Cobrar" FontSize="25" x:Name="añadirVenta" Click="añadirVenta_Click" HorizontalContentAlignment="Center" Grid.Column="3" Height="235" Background="#00B2CA" BorderBrush="CornflowerBlue"/>
             </Grid>
         </Grid>
     </DockPanel>

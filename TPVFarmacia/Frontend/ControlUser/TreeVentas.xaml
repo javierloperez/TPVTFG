@@ -30,7 +30,7 @@
                     <DataTemplate DataType="{x:Type ent:Venta}"  >
                         <StackPanel Orientation="Horizontal" ContextMenuOpening="EliminarVenta_Click">
 
-                            <mat:PackIcon Kind="Calendar" Width="16" Height="16" Foreground="Purple"/>
+                            <mat:PackIcon Kind="Calendar" Width="16" Height="16" Foreground="HotPink"/>
                             <TextBlock Margin="10 0 0 0">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0:dd/MM/yyyy hh:mm } .... Precio: {1}€   ---    Vendido por {2}">
@@ -40,7 +40,7 @@
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
-                            </StackPanel>
+                        </StackPanel>
                     </DataTemplate>
                 </TreeView.Resources>
             </TreeView>
@@ -48,9 +48,10 @@
         <Grid >
             <DataGrid x:Name="dgProductos" AutoGenerateColumns="False" ColumnWidth="*" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn  Header="Nombre de producto" Binding="{Binding Descripcion}"/>
-                    <DataGridTextColumn  Header="Cantidad" Binding="{Binding Cantidad}"/>
-                    <DataGridTextColumn  Header="Precio" Binding="{Binding Precio}"/>
+                    <DataGridTextColumn  Header="Nombre de producto" Binding="{Binding Descripcion}" IsReadOnly="True"/>
+                    <DataGridTextColumn  Header="Cantidad" Binding="{Binding Cantidad}" IsReadOnly="True" />
+                    <DataGridTextColumn x:Name="dgprecio" Header="Precio (sin iva)" Binding="{Binding Precio, StringFormat={}{0}€}" IsReadOnly="True"/>
+                    
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

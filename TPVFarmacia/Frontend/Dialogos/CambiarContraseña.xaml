@@ -51,8 +51,8 @@ Password
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="btnGuardar" Click="btnGuardar_Click" Height="40" Width="100" Content="Guardar" Grid.Column="1"/>
-                <Button x:Name="btnCancelar" Click="btnCancelar_Click" Height="40" Width="100" Content="Cancelar"/>
+                <Button x:Name="btnGuardar" Click="btnGuardar_Click" Height="40" Width="100" Content="Guardar" Grid.Column="1" Background="HotPink" BorderBrush="Transparent"/>
+                <Button x:Name="btnCancelar" BorderBrush="Transparent" Click="btnCancelar_Click" Height="40" Width="100" Content="Cancelar" Background="HotPink"/>
             </Grid>
         </StackPanel>
     </Grid>
