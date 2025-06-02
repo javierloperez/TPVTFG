@@ -71,7 +71,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="1.7*"/>
                 </Grid.RowDefinitions>
-                <Grid Background="Wheat" x:Name="panelTotal">
+                <Grid Background="#f9f1dc" x:Name="panelTotal">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -84,7 +84,7 @@
                     <TextBlock Text="Total..." FontSize="20" Margin="10 0 0 0" />
                     <TextBlock Grid.Column="1" HorizontalAlignment="Right"  x:Name="precioTotal"  FontSize="20" Margin="0 0 10 0"/>
                     <TextBlock Text="IVA" Grid.Row="1"  FontSize="20" Margin="10 0 0 0"/>
-                    <TextBox x:Name="porcentajeIva" Text="0%" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 10 0" PreviewMouseDown="porcentajeIva_PreviewMouseDown" Width="50" HorizontalAlignment="Right" HorizontalContentAlignment="Center" TextChanged="porcentajeIva_TextChanged"/>
+                    <TextBox x:Name="porcentajeIva" Text="10%" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 10 0" PreviewMouseDown="porcentajeIva_PreviewMouseDown" Width="50" HorizontalAlignment="Right" HorizontalContentAlignment="Center" TextChanged="porcentajeIva_TextChanged"/>
                 </Grid>
                 <Button x:Name="Calculadora" Grid.Row="1" Click="Calculadora_Click" Height="150" VerticalAlignment="Bottom" Background="#00B2CA" BorderBrush="CornflowerBlue">
                     <Button.Content>
@@ -94,7 +94,7 @@
                 </Button>
             </Grid>
 
-            <Grid Grid.Column="1" Grid.Row="1" x:Name="panelInferior" >
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="panelInferior" Background="White" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -111,7 +111,7 @@
 
                 <StackPanel Margin="30 10 0 0" Grid.Column="1">
                     <TextBlock Text="Tipo de cobro:" TextDecorations="Underline" FontSize="20" FontWeight="Bold"  />
-                    <RadioButton FontWeight="Bold" FontSize="20" VerticalAlignment="Center" x:Name="tarjeta" Checked="efectivo_Checked" Margin="0 15 0 15 ">
+                    <RadioButton FontWeight="Bold" FontSize="20" VerticalAlignment="Center" IsChecked="True" x:Name="tarjeta" Checked="efectivo_Checked" Margin="0 15 0 15 ">
                         <RadioButton.Content>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Tarjeta" VerticalAlignment="Center" TextAlignment="Center"/>

@@ -16,6 +16,7 @@ public partial class Oferta : PropertyChangedDataError
     public int Id { get; set; }
 
     [StringLength(100)]
+    [Required]
     public string Descripcion { get; set; } = null!;
 
     [Column(TypeName = "date")]
@@ -27,7 +28,8 @@ public partial class Oferta : PropertyChangedDataError
     [StringLength(100)]
     public string? Fichero { get; set; }
 
-    public int? DescuentoPctj { get; set; }
+    [Required]
+    public int DescuentoPctj { get; set; }
 
     [InverseProperty("Oferta")]
     public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();

@@ -41,8 +41,8 @@ namespace TVPFarmacia.Frontend.Dialogos
             _mvOfertas = mv;
             DataContext = _mvOfertas;
             _mvOfertas.btnGuardar = btnGuardar;
-            dpFechaFin.SelectedDate = DateTime.Today;
-            dpFechaInicio.SelectedDate = DateTime.Today;
+            dpFechaFin.SelectedDate = DateTime.UtcNow;
+            dpFechaInicio.SelectedDate = DateTime.UtcNow;
 
         }
 
@@ -64,7 +64,11 @@ namespace TVPFarmacia.Frontend.Dialogos
         /// <param name="e"></param>
         private async void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
-
+            if(_mvOfertas._crearOferta.DescuentoPctj==0)
+            {
+                MessageBox.Show("El descuento no puede ser 0", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             if (_mvOfertas.IsValid(this))
             {

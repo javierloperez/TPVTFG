@@ -184,8 +184,11 @@ namespace TVPFarmacia.Frontend
 
         private void txtCantidad_GotFocus(object sender, RoutedEventArgs e)
         {
+            txtCantidad.Text = string.Empty;
             TecladoNum teclado = new TecladoNum(txtCantidad, _cantidadMax);
             teclado.ShowDialog();
+            if (string.IsNullOrEmpty(txtCantidad.Text)) txtCantidad.Text = "1";
+
             _cantidad = decimal.Parse(txtCantidad.Text);
         }
 

@@ -42,23 +42,14 @@ namespace TVPFarmacia.MVVM
         int _cantidadItem;
         private Dictionary<int, int> _stockTemporal = new Dictionary<int, int>();
         public bool _actualizarCantidad { get; set; }
-        private string _nombreP;
-        public IEnumerable<Categoria> _listaCategorias { get { return Task.Run(_categoriaServicio.GetAllAsync).Result; } }
-        private ObservableCollection<Categoria> _listaCategoriasAux;
-        public ObservableCollection<Categoria> ListaCategoriasAux
-        {
-            get => _listaCategoriasAux;
-            set
-            {
-                _listaCategoriasAux = value;
-                OnPropertyChanged(nameof(ListaCategoriasAux));
-            }
-        }
+        private string _nombreP;    
 
+        public List<Categoria> _listaCategorias { get; set; } = new List<Categoria>();
+        public List<Categoria> _listaCategoriasAux { get; set; } = new List<Categoria>();
 
 
         public IEnumerable<Producto> _listaProductos { get { return Task.Run(_productoServicio.GetAllAsync).Result.Where(p => p.Activado.ToLower().Equals("si")); } }
-        public IEnumerable<Oferta> _listaOfertas { get { return Task.Run(_ofertaServicio.GetAllAsync).Result; } }
+        public IEnumerable<Oferta> _listaOfertas { get { return Task.Run(_ofertaServicio.GetAllAsync).Result.Where(o => o.OfertaFin>DateTime.Now); } }
 
         private ListCollectionView _listaProductosParaFiltro;
         public ListCollectionView listaProductosFiltro => _listaProductosParaFiltro;
@@ -142,17 +133,17 @@ namespace TVPFarmacia.MVVM
             _panelInferior = panelInferior;
             _precioConIva = precioConIva;
             _iva = porcentajeIva;
-            await CargarCategoriasAsync();
             servicio = _productoServicio;
             _listaProductosParaFiltro = new ListCollectionView((await _productoServicio.GetAllAsync()).ToList());
             criterios = new List<Predicate<Producto>>();
             predicadoFiltro = new Predicate<object>(FiltroCriterios);
             criterios.Clear();
+
+            await CargarCategoriasAsync();
+            await RecargarListaProductosAsync();
             ListadoCategorias(_panelCategorias);
 
             InicializaCriterios();
-            await RecargarListaProductosAsync();
-
         }
 
         public void ActualizarStock(int id, int cantidad)
@@ -175,20 +166,25 @@ namespace TVPFarmacia.MVVM
 
         public async Task CargarCategoriasAsync()
         {
-            var listaOriginal = await _categoriaServicio.GetAllAsync();
-
-            var listaConExtra = new ObservableCollection<Categoria>
-    {
-        new Categoria { Id = -1, Categoria1 = "--Selecciona una categoría--" }
-    };
-
-            foreach (var cat in listaOriginal)
-            {
-                listaConExtra.Add(cat);
-            }
-
-            ListaCategoriasAux = listaConExtra;
+            _listaCategorias = (await _categoriaServicio.GetAllAsync()).ToList();
+            OnPropertyChanged(nameof(_listaCategorias));
+            ListadoCategorias(_panelCategorias);
+            await CargarCategoriasAux();
         }
+
+        public async Task CargarCategoriasAux()
+        {
+            _listaCategoriasAux = (await _categoriaServicio.GetAllAsync()).ToList();
+            var categoriaInicial = new Categoria
+            {
+                Id = -1,
+                Categoria1 = "--Seleccionar categoría--"
+            };
+
+            _listaCategoriasAux.Insert(0, categoriaInicial);
+            OnPropertyChanged(nameof(_listaCategoriasAux));
+        }
+
         public async Task RecargarListaProductosAsync()
         {
             var productos = await _productoServicio.GetAllAsync();
@@ -216,6 +212,7 @@ namespace TVPFarmacia.MVVM
         }
         public void ListadoCategorias(StackPanel panelCategorias)
         {
+            _panelCategorias.Children.Clear();
             foreach (var item in _listaCategorias)
             {
 

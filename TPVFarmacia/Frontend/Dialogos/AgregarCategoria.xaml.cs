@@ -60,6 +60,7 @@ namespace TVPFarmacia.Frontend.Dialogos
                     await this.ShowMessageAsync("Gestión crear categoria", "La categoria se ha guardado correctamente");
                     DialogResult = true;
                     _mvCategorias._crearCategoria = new Categoria();
+                    await _mvProductos.CargarCategoriasAsync();
 
                 }
                 else
@@ -74,8 +75,6 @@ namespace TVPFarmacia.Frontend.Dialogos
                 this.ShowMessageAsync("Gestión crear categoria", "Tienes campos obligatorios sin rellenar correctamente");
 
             }
-            //Recargar la lista de categorías para que esté actualizada
-            await _mvProductos.CargarCategoriasAsync();
         }
 
         /// <summary>

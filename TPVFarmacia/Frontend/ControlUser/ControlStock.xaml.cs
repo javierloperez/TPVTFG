@@ -174,6 +174,7 @@ namespace TVPFarmacia.Frontend.ControlUser
         private void txtBuscarNombre_TextChanged(object sender, TextChangedEventArgs e)
         {
             _mvProducto.Filtrar();
+
         }
 
         /// <summary>

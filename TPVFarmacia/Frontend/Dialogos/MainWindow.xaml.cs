@@ -32,7 +32,7 @@ namespace TVPFarmacia.Frontend
         private MVVentas _mvVentas;
         private MVVentasProducto _mvVentasProducto;
         private MVUsuario _mvUsuario;
-        private string _tipoPago; // Tipo de pago seleccionado (efectivo o tarjeta)
+        private string _tipoPago = "tarjeta"; // Tipo de pago seleccionado (efectivo o tarjeta)
         private Cliente _clienteElegido;
         private readonly string _nombreFarmacia = "Los geles hueles S.L";
 
@@ -199,6 +199,11 @@ namespace TVPFarmacia.Frontend
             try
             {
                 int idVenta = 0;
+                if (decimal.Parse(totalADevolver.Text.TrimEnd('€')) < 0)
+                {
+                    MessageBox.Show("El total a devolver no puede ser negativo. Por favor, compruebe los datos introducidos");
+                    return;
+                }
                 idVenta = _mvVentas.AgregarVenta(_clienteElegido, decimal.Parse(precioConIva.Text.TrimEnd('€')), _usuario, _tipoPago, decimal.Parse(porcentajeIva.Text.TrimEnd('%')));
                 if (idVenta <= 0)
                 {
@@ -344,9 +349,9 @@ namespace TVPFarmacia.Frontend
         {
             _mvProducto.LimpiarStock();
             panelTicket.Children.Clear();
-            porcentajeIva.Text = "0%";
+            porcentajeIva.Text = "10%";
             precioConIva.Text = string.Empty;
-            _tipoPago = string.Empty;
+            _tipoPago = "tarjeta";
             _clienteElegido = new Cliente();
             totalADevolver.Text = string.Empty;
             precioTotal.Text = "0€";
@@ -354,7 +359,7 @@ namespace TVPFarmacia.Frontend
             cbCliente.SelectedIndex = 0;
             cantidadRecibida.Text = "0€";
             efectivo.IsChecked = false;
-            tarjeta.IsChecked = false;
+            tarjeta.IsChecked = true;
             cantidadRecibida.Visibility = Visibility.Hidden;
             mensaje.Visibility = Visibility.Hidden;
             totalADevolver.Visibility = Visibility.Hidden;

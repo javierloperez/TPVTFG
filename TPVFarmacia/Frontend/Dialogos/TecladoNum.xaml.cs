@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +23,21 @@ namespace TVPFarmacia.Frontend.Dialogos
     {
         private TextBox _textBoxDestino;
         private int maxCantidad;
+        private bool btnOk;
         public TecladoNum(TextBox destino, int maxCant)
         {
             InitializeComponent();
             _textBoxDestino = destino;
             maxCantidad = maxCant;
+            this.Closing += TecladoNum_Closing;
+            btnOk = false;
+
+        }
+
+        private void TecladoNum_Closing(object sender, CancelEventArgs e)
+        {
+            if(!btnOk)
+            _textBoxDestino.Text = "1";
         }
 
         private void Boton_Click(object sender, RoutedEventArgs e)
@@ -45,7 +56,8 @@ namespace TVPFarmacia.Frontend.Dialogos
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            
+            btnOk = true;
+            if (string.IsNullOrEmpty(_textBoxDestino.Text)) _textBoxDestino.Text = "1";
             if((int)Math.Round(decimal.Parse(_textBoxDestino.Text))>maxCantidad)
             {
                 _textBoxDestino.Text = maxCantidad.ToString();

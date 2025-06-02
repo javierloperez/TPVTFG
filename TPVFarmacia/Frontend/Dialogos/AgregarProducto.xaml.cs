@@ -15,7 +15,6 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using TVPFarmacia.Backend.Modelos;
-using TVPFarmacia.Backend.Utiles;
 using TVPFarmacia.MVVM;
 using TVPFarmacia.MVVM.Base;
 

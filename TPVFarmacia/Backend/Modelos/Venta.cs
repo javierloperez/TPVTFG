@@ -25,7 +25,8 @@ public partial class Venta : PropertyChangedDataError
     public int EmpleadoId { get; set; }
 
     [StringLength(50)]
-    public string? TipoCobro { get; set; }
+    [Required]
+    public string TipoCobro { get; set; }
 
     [Precision(10)]
     public decimal Total { get; set; }

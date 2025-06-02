@@ -11,13 +11,12 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0 20 0 20">
           
-            <TextBlock Text="Listado de Productos" Margin="20 0 20 0" FontSize="20" VerticalAlignment="Center"/>
 
             <Button x:Name="AgregarProducto" Content="NuevoProducto" Style="{StaticResource MaterialDesignFlatButton}" Click="AgregarProducto_Click" Foreground="HotPink" />
             <Button x:Name="AgregarCategoria" Content="NuevaCategoria" Style="{StaticResource MaterialDesignFlatButton}" Click="AgregarCategoria_Click" Foreground="HotPink"/>
             <Button x:Name="AgregarOferta" Content="NuevaOferta" Style="{StaticResource MaterialDesignFlatButton}" Click="AgregarOferta_Click" Foreground="HotPink"/>
 
-            <ComboBox x:Name="cbCategoria" Style="{StaticResource MaterialDesignFilledComboBox}" mat:HintAssist.Hint="--Selecciona una categoria--" Margin="10 0 20 0" ItemsSource="{Binding ListaCategoriasAux}" DisplayMemberPath="Categoria1" SelectedItem="{Binding categoriaSeleccionada}" SelectionChanged="cbCategoria_SelectionChanged"/>
+            <ComboBox x:Name="cbCategoria" Style="{StaticResource MaterialDesignFilledComboBox}" mat:HintAssist.Hint="--Selecciona una categoria--" Margin="10 0 20 0" ItemsSource="{Binding _listaCategoriasAux}" DisplayMemberPath="Categoria1" SelectedItem="{Binding categoriaSeleccionada}" SelectionChanged="cbCategoria_SelectionChanged"/>
 
             <TextBox Width="150" BorderThickness="1" Height="30"  x:Name="txtBuscarNombre" TextChanged="txtBuscarNombre_TextChanged" Text="{Binding filtroNombre, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0" Padding="10 0 0 0"  mat:TextFieldAssist.HasClearButton="True" mat:HintAssist.Hint="Buscar por nombre" />
 
@@ -41,7 +40,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Nombre de modelo" Binding="{Binding Ubicacion}"/>
+                    <DataGridTextColumn Header="Ubicación" Binding="{Binding Ubicacion}"/>
 
                     <DataGridTemplateColumn Width="100">
                         <DataGridTemplateColumn.CellTemplate>

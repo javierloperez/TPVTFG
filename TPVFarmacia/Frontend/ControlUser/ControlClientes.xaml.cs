@@ -37,7 +37,7 @@ namespace TVPFarmacia.Frontend.ControlUser
             _mvClientes = mvClientes;
 
             DataContext = _mvClientes;
-
+            
         }
         /// <summary>
         /// Evento que se ejecuta al pulsar en el boton de editar un cliente seleccionado.
@@ -76,8 +76,15 @@ namespace TVPFarmacia.Frontend.ControlUser
         /// <param name="e"></param>
         private async void btnBorrar_Click(object sender, RoutedEventArgs e)
         {
+            
             _mvClientes._crearCliente = (Backend.Modelos.Cliente)dgAñadirCliente.SelectedItem;
 
+            if (_mvClientes._crearCliente.Ventas.Count() >0)
+            {
+                MessageBox.Show("No se puede eliminar un cliente que tiene ventas asociadas");
+                return; 
+            }
+            
             _mvClientes._crearCliente.Activado = "no";
 
             if (_mvClientes.actualizar)
