@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using NLog;
 using TVPFarmacia.Backend.Modelos;
 using TVPFarmacia.Backend.Servicios;
 using TVPFarmacia.Frontend;
@@ -15,11 +16,12 @@ namespace TVPFarmacia.MVVM
 {
     public class MVVentas : MVBaseCRUD<Venta>
     {
-        TpvbdContext _contexto;
-        Venta _venta;
-        VentaServicio _ventaServicio;
-        ClienteServicio _clienteServicio;
-        UsuarioServicio _usuarioServicio;
+        private TpvbdContext _contexto;
+        private Venta _venta;
+        private VentaServicio _ventaServicio;
+        private ClienteServicio _clienteServicio;
+        private UsuarioServicio _usuarioServicio;
+        private Logger _logger; 
         public List<Venta> _listaVentas { get; set; } = new List<Venta>();
         public List<Usuario> _listaUsuarios { get; set; } = new List<Usuario>();
         public List<Cliente> _listaClientes { get; set; } = new List<Cliente>();
@@ -61,8 +63,9 @@ namespace TVPFarmacia.MVVM
 
         }
 
-        public async Task Inicializa()
+        public async Task Inicializa(Logger logger)
         {
+            _logger = logger;
             _venta = new Venta();
             _ventaServicio = new VentaServicio(_contexto);
             _clienteServicio = new ClienteServicio(_contexto);
@@ -93,13 +96,13 @@ namespace TVPFarmacia.MVVM
                 }
                 else
                 {
-                    MessageBox.Show("Error al crear la venta, faltan campos por rellenar");
+                    _logger.Error("Error al crear la venta, faltan campos por rellenar");
                     return -1;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Faltan campos por rellenar ");
+                _logger.Error("AgregarVenta. Error al agregar la venta: " + ex.Message);
                 return -1;
             }
         }

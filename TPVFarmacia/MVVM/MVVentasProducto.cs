@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using NLog;
 using TVPFarmacia.Backend.Modelos;
 using TVPFarmacia.Backend.Servicios;
 using TVPFarmacia.Frontend;
@@ -13,10 +14,10 @@ namespace TVPFarmacia.MVVM
 {
     public class MVVentasProducto : MVBaseCRUD<VentaProducto>
     {
-        TpvbdContext _contexto;
-        VentaProducto _venta;
-        VentaProductoServicio _ventaServicio;
-
+        private TpvbdContext _contexto;
+        private VentaProducto _venta;
+        private VentaProductoServicio _ventaServicio;
+        private Logger _logger;
 
         public IEnumerable<VentaProducto> _listaVentas { get { return Task.Run(_ventaServicio.GetAllAsync).Result; } }
         public bool guarda { get { return Task.Run(() => Add(_crearVentaP)).Result; } }
@@ -45,8 +46,9 @@ namespace TVPFarmacia.MVVM
             }
         }
 
-        public async Task Inicializa()
+        public async Task Inicializa(Logger logger)
         {
+            _logger = logger;
             _venta = new VentaProducto();
             _ventaServicio = new VentaProductoServicio(_contexto);
 
@@ -68,7 +70,7 @@ namespace TVPFarmacia.MVVM
             }
             else
             {
-                MessageBox.Show("Error al crear la venta del producto completa");
+                _logger.Error("Error al crear la venta del producto completa");
             }
         }
 

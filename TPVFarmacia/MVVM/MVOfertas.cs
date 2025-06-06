@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using NLog;
 using Org.BouncyCastle.Asn1.Mozilla;
 using TPVFarmacia.Backend.Modelos;
 using TVPFarmacia.Backend.Modelos;
@@ -19,7 +20,7 @@ namespace TVPFarmacia.MVVM.Base
         private TpvbdContext _contexto;
         private Oferta _oferta;
         private OfertaServicio _ofertaServicio;
-
+        private Logger _logger;
 
         public MVOfertas(TpvbdContext contexto)
         {
@@ -33,13 +34,14 @@ namespace TVPFarmacia.MVVM.Base
             OnPropertyChanged(nameof(_listaOfertas));
         }
 
-        public async Task Inicializa()
+        public async Task Inicializa(Logger logger)
         {
             _oferta = new Oferta();
             _oferta.OfertaFin = DateTime.Now;
             _oferta.OfertaInicio = DateTime.Now;
             _ofertaServicio = new OfertaServicio(_contexto);
             servicio = _ofertaServicio;
+            _logger = logger;
             await CargarOfertasAsync();
 
         }
@@ -72,12 +74,13 @@ namespace TVPFarmacia.MVVM.Base
                 }
                 else
                 {
+                    _logger.Info($"Oferta con ID {idOferta} no está activa, la oferta expiró");
                     return 0;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al comprobar ofertas: {ex.Message}");
+                _logger.Error(ex, $"Error al comprobar ofertas: {ex.Message}");
                 return 0;
             }
         }

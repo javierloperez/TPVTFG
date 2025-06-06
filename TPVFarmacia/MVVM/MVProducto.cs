@@ -6,6 +6,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using MaterialDesignThemes.Wpf;
+using NLog;
 using TPVFarmacia.Backend.Modelos;
 using TVPFarmacia.Backend.Modelos;
 using TVPFarmacia.Backend.Servicios;
@@ -34,6 +35,7 @@ namespace TVPFarmacia.MVVM
         private TextBlock _precioConIva;
         private Grid _panelInferior;
         private TextBox _iva;
+        private Logger _logger;
         public Dictionary<int, (Grid fila, TextBlock txtCant, TextBlock txtPrecio)> _lineasTicket = new Dictionary<int, (Grid, TextBlock, TextBlock)>();
 
 
@@ -60,11 +62,7 @@ namespace TVPFarmacia.MVVM
         private Predicate<Producto> criterioCategoria;
 
 
-        public void LimpiarStock()
-        {
-            _stockTemporal.Clear();
-            _precioFinal = 0;
-        }
+     
         public Producto Clonar { get { return (Producto)_producto.Clone(); } }
 
         public bool guarda
@@ -117,8 +115,9 @@ namespace TVPFarmacia.MVVM
             _contexto = contexto;
         }
 
-        public async Task Inicializa(MVOfertas mvOfertas, WrapPanel panelMedio, StackPanel panelTicket, TextBlock precioTotal, StackPanel panelCategorias, Grid panelInferior, TextBlock precioConIva, System.Windows.Controls.TextBox porcentajeIva)
+        public async Task Inicializa(Logger logger,MVOfertas mvOfertas, WrapPanel panelMedio, StackPanel panelTicket, TextBlock precioTotal, StackPanel panelCategorias, Grid panelInferior, TextBlock precioConIva, System.Windows.Controls.TextBox porcentajeIva)
         {
+            _logger = logger;
             _mvOfertas = mvOfertas;
             _categoria = new Categoria();
             _categoriaServicio = new CategoriaServicio(_contexto);
@@ -159,7 +158,7 @@ namespace TVPFarmacia.MVVM
             }
             else
             {
-                MessageBox.Show("Error al actualizar el stock");
+                _logger.Error($"Error al actualizar el stock del producto con ID {id}. Cantidad: {cantidad}");
             }
             _crearProducto = new Producto();
         }
@@ -210,29 +209,36 @@ namespace TVPFarmacia.MVVM
 
             OnPropertyChanged(nameof(listaProductosFiltro));
         }
+
         public void ListadoCategorias(StackPanel panelCategorias)
         {
             _panelCategorias.Children.Clear();
-            foreach (var item in _listaCategorias)
+            try
             {
-
-                Button btn = new Button
+                foreach (var item in _listaCategorias)
                 {
-                    Width = 140,
-                    Height = 140,
-                    Margin = new Thickness(5),
-                    BorderThickness = new Thickness(0),
-                    Background = (Brush)new BrushConverter().ConvertFromString("#f9f1dc"),
-                    Content = new Image
-                    {
-                        Source = new BitmapImage(new Uri(item.RutaImagen, UriKind.RelativeOrAbsolute)),
-                    },
-                    Tag = item
-                };
 
-                btn.Click += ListarProductos_Click;
-                it++;
-                panelCategorias.Children.Add(btn);
+                    Button btn = new Button
+                    {
+                        Width = 140,
+                        Height = 140,
+                        Margin = new Thickness(5),
+                        BorderThickness = new Thickness(0),
+                        Background = (Brush)new BrushConverter().ConvertFromString("#f9f1dc"),
+                        Content = new Image
+                        {
+                            Source = new BitmapImage(new Uri(item.RutaImagen, UriKind.RelativeOrAbsolute)),
+                        },
+                        Tag = item
+                    };
+
+                    btn.Click += ListarProductos_Click;
+                    it++;
+                    panelCategorias.Children.Add(btn);
+                }
+            }catch(Exception ex)
+            {
+                _logger.Error(ex, "Error al cargar las categorías en el panel de categorías.");
             }
 
         }
@@ -253,43 +259,49 @@ namespace TVPFarmacia.MVVM
         {
             int i = 0;
             _panelMedio.Children.Clear();
-
-            foreach (var item in productosFiltrados)
+            try
             {
-                if (item.Activado.ToLower().Equals("no"))
+                foreach (var item in productosFiltrados)
                 {
-                    continue;
-                }
-
-                Button btn = new Button
-                {
-                    Width = 140,
-                    Height = 140,
-                    Margin = new Thickness(5),
-                    BorderThickness = new Thickness(0),
-                    Background = (Brush)new BrushConverter().ConvertFromString("#f9f1dc"),
-                    Content = new Image
+                    if (item.Activado.ToLower().Equals("no"))
                     {
-                        Source = new BitmapImage(new Uri(item.RutaImagen, UriKind.RelativeOrAbsolute)),
+                        continue;
+                    }
 
-                    },
-                    Tag = item
-                };
-                i++;
-                if (item.Cantidad > 0)
-                {
-                    btn.IsEnabled = true;
+                    Button btn = new Button
+                    {
+                        Width = 140,
+                        Height = 140,
+                        Margin = new Thickness(5),
+                        BorderThickness = new Thickness(0),
+                        Background = (Brush)new BrushConverter().ConvertFromString("#f9f1dc"),
+                        Content = new Image
+                        {
+                            Source = new BitmapImage(new Uri(item.RutaImagen, UriKind.RelativeOrAbsolute)),
+
+                        },
+                        Tag = item
+                    };
+                    i++;
+                    if (item.Cantidad > 0)
+                    {
+                        btn.IsEnabled = true;
+                    }
+                    else
+                    {
+                        btn.IsEnabled = false;
+                    }
+                    btn.Click += (s, e) =>
+                    {
+                        _cantidadItem = 1;
+                        SeleccionarCantidad(s, e);
+                    };
+                    _panelMedio.Children.Add(btn);
                 }
-                else
-                {
-                    btn.IsEnabled = false;
-                }
-                btn.Click += (s, e) =>
-                {
-                    _cantidadItem = 1;
-                    SeleccionarCantidad(s, e);
-                };
-                _panelMedio.Children.Add(btn);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error al listar los productos de la categoría seleccionada.");
             }
         }
 
@@ -546,7 +558,11 @@ namespace TVPFarmacia.MVVM
 
             return stockOriginal;
         }
-
+        public void LimpiarStock()
+        {
+            _stockTemporal.Clear();
+            _precioFinal = 0;
+        }
         public void RegistrarStockTemporal(int idProducto, int cantidad)
         {
             if (_stockTemporal.ContainsKey(idProducto))
@@ -567,7 +583,7 @@ namespace TVPFarmacia.MVVM
             }
             catch (Exception ex)
             {
-
+                _logger.Error(ex, "Error al modificar el total del ticket. Precio: " + precio);
             }
         }
 

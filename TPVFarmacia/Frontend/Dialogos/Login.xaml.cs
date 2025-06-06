@@ -1,6 +1,9 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using MahApps.Metro.Controls;
 using Microsoft.EntityFrameworkCore;
+using NLog.Config;
+using NLog;
 using TVPFarmacia.Backend.Modelos;
 using TVPFarmacia.Backend.Servicios;
 using TVPFarmacia.Frontend.Dialogos;
@@ -18,11 +21,16 @@ namespace TVPFarmacia.Frontend
         private TpvbdContext contexto;
         private UsuarioServicio usuarioServicio;
         private Usuario usuario;
+        private Logger _logger;
+        private string _carpetaLogs = @"C:\ProgramData\TPVFarmacia";
         /// <summary>
         /// Constructor de la clase Login
         /// </summary>
         public Login()
         {
+            XmlLoggingConfiguration logConfig = new XmlLoggingConfiguration(Path.Combine(Directory.GetParent(Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName).FullName, "../Logs.xml"));
+            LogManager.Configuration = logConfig;
+            _logger = LogManager.GetCurrentClassLogger();
             if (ConectarBD()) InitializeComponent();
             usuarioServicio = new UsuarioServicio(contexto);
         }
@@ -43,7 +51,7 @@ namespace TVPFarmacia.Frontend
             catch (Exception ex)
             {
                 correcto = false;
-                MessageBox.Show("Conexion de la base de datos", "Ups!!!");
+                _logger.Error("ConectarBD. Error al abrir la conexión a la base de datos: " + ex.Message);  
             }
             return correcto;
         }
@@ -59,8 +67,8 @@ namespace TVPFarmacia.Frontend
             if (await usuarioServicio.Login(txtUsername.Text, txtPassword.Password))
             {
                 usuario = await usuarioServicio.GetUsuarioPorNombre(txtUsername.Text);
-
-                MainWindow ventaPrincipal = new MainWindow(contexto, usuario);
+                _logger.Info($"Login. Usuario {usuario.Login} ha iniciado sesión correctamente.");
+                MainWindow ventaPrincipal = new MainWindow(contexto, usuario,_logger);
                 ventaPrincipal.Show();
                 this.Close();
             }

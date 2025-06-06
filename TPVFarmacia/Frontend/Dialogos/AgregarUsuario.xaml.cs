@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using NLog;
 using TPVFarmacia.Backend.Modelos;
 using TPVFarmacia.MVVM;
 using TVPFarmacia.Backend.Modelos;
@@ -59,6 +60,7 @@ namespace TPVFarmacia.Frontend.Dialogos
             }
             else
             {
+                
                 this.ShowMessageAsync("Gestión usuarios", "Tienes campos obligatorios sin rellenar correctamente");
             }
         }

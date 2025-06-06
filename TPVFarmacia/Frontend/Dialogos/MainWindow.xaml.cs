@@ -1,7 +1,10 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
+using NLog.Config;
+using NLog;
 using PdfSharp.Drawing;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf;
@@ -32,21 +35,24 @@ namespace TVPFarmacia.Frontend
         private MVVentas _mvVentas;
         private MVVentasProducto _mvVentasProducto;
         private MVUsuario _mvUsuario;
-        private string _tipoPago = "tarjeta"; // Tipo de pago seleccionado (efectivo o tarjeta)
+        private string _tipoPago = "tarjeta"; 
         private Cliente _clienteElegido;
         private readonly string _nombreFarmacia = "Los geles hueles S.L";
+        private Logger _logger;
 
         /// <summary>
         /// Constructor de la clase MainWindow.
         /// </summary>
         /// <param name="contexto">Contexto de la BD</param>
         /// <param name="usuario">Usuario con el que se ha registrado</param>
-        public MainWindow(TpvbdContext contexto, Usuario usuario)
+        public MainWindow(TpvbdContext contexto, Usuario usuario, Logger logger)
         {
+            
             InitializeComponent();
             _contexto = contexto;
             _usuario = usuario;
             _ = Inicializa();
+            _logger = logger;
             // Asignación del usuario a la ventana principal
             nombreUsuario.Content = _usuario.Nombre + " " + usuario.Apellidos;
             nombreFarmacia.Text = _nombreFarmacia;
@@ -81,10 +87,10 @@ namespace TVPFarmacia.Frontend
             {
 
                 _mvOfertas = new MVOfertas(_contexto);
-                await _mvOfertas.Inicializa();
+                await _mvOfertas.Inicializa(_logger);
 
                 _mvProducto = new MVProducto(_contexto);
-                await _mvProducto.Inicializa(_mvOfertas, panelMedio, panelTicket, precioTotal, panelCategorias, panelInferior, precioConIva, porcentajeIva);
+                await _mvProducto.Inicializa(_logger,_mvOfertas, panelMedio, panelTicket, precioTotal, panelCategorias, panelInferior, precioConIva, porcentajeIva);
 
                 _mvCategoria = new MVCategoria(_contexto);
                 await _mvCategoria.Inicializa();
@@ -96,18 +102,17 @@ namespace TVPFarmacia.Frontend
                 await _mvUsuario.Inicializa();
 
                 _mvVentas = new MVVentas(_contexto);
-                await _mvVentas.Inicializa();
+                await _mvVentas.Inicializa(_logger);
 
                 _mvVentasProducto = new MVVentasProducto(_contexto);
-                await _mvVentasProducto.Inicializa();
+                await _mvVentasProducto.Inicializa(_logger);
 
                 DataContext = _mvClientes;
                 CompruebaPermisos();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al inicializar la aplicación: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
+                _logger.Error(ex, "Error al inicializar la aplicación MainWindow.xaml.cs - Inicializa()");
             }
         }
 
@@ -201,6 +206,7 @@ namespace TVPFarmacia.Frontend
                 int idVenta = 0;
                 if (decimal.Parse(totalADevolver.Text.TrimEnd('€')) < 0)
                 {
+                    _logger.Warn("El total a devolver es negativo. Datos introducidos: {0}", totalADevolver.Text.TrimEnd('€'));
                     MessageBox.Show("El total a devolver no puede ser negativo. Por favor, compruebe los datos introducidos");
                     return;
                 }
@@ -222,12 +228,12 @@ namespace TVPFarmacia.Frontend
                 }
                 GenerarTicket();
                 LimpiarVentana();
+                _logger.Info($"Venta añadida correctamente por el usuario {_usuario.Nombre} {_usuario.Apellidos} para el cliente {_clienteElegido.Nombre ?? "Estándar"} con ID de venta {idVenta}.");
 
             }
             catch (Exception ex)
             {
-                MessageBox.Show("No se ha podido realizar la venta. Por favor, compruebe los datos introducidos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
+                _logger.Error(ex, "Error al añadir la venta en MainWindow.xaml.cs - añadirVenta_Click()");  
             }
         }
 
@@ -320,10 +326,11 @@ namespace TVPFarmacia.Frontend
                     document.Save(guardarDialogo.FileName);
                     MessageBox.Show("Ticket guardado correctamente en:\n" + guardarDialogo.FileName, "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+                _logger.Info($"Ticket generado y guardado en: {guardarDialogo.FileName} por el usuario {_usuario.Nombre} {_usuario.Apellidos} para el cliente {_clienteElegido.Nombre ?? "Estándar"}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al generar el ticket: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _logger.Error(ex, "Error al generar el ticket en MainWindow.xaml.cs - GenerarTicket()");
             }
         }
 
@@ -347,24 +354,30 @@ namespace TVPFarmacia.Frontend
 
         public void LimpiarVentana()
         {
-            _mvProducto.LimpiarStock();
-            panelTicket.Children.Clear();
-            porcentajeIva.Text = "10%";
-            precioConIva.Text = string.Empty;
-            _tipoPago = "tarjeta";
-            _clienteElegido = new Cliente();
-            totalADevolver.Text = string.Empty;
-            precioTotal.Text = "0€";
-            txtNombreCliente.Text = string.Empty;
-            cbCliente.SelectedIndex = 0;
-            cantidadRecibida.Text = "0€";
-            efectivo.IsChecked = false;
-            tarjeta.IsChecked = true;
-            cantidadRecibida.Visibility = Visibility.Hidden;
-            mensaje.Visibility = Visibility.Hidden;
-            totalADevolver.Visibility = Visibility.Hidden;
+            try
+            {
+                _mvProducto.LimpiarStock();
+                panelTicket.Children.Clear();
+                porcentajeIva.Text = "10%";
+                precioConIva.Text = string.Empty;
+                _tipoPago = "tarjeta";
+                _clienteElegido = new Cliente();
+                totalADevolver.Text = string.Empty;
+                precioTotal.Text = "0€";
+                txtNombreCliente.Text = string.Empty;
+                cbCliente.SelectedIndex = 0;
+                cantidadRecibida.Text = "0€";
+                efectivo.IsChecked = false;
+                tarjeta.IsChecked = true;
+                cantidadRecibida.Visibility = Visibility.Hidden;
+                mensaje.Visibility = Visibility.Hidden;
+                totalADevolver.Visibility = Visibility.Hidden;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error al limpiar la ventana en MainWindow.xaml.cs - LimpiarVentana()");
+            }
         }
-
         private void añadirCliente_Click(object sender, RoutedEventArgs e)
         {
             AgregarCliente ac = new AgregarCliente(_mvClientes, false);

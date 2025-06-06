@@ -68,9 +68,7 @@ namespace TVPFarmacia.Backend.Servicios
             try
             {
                 // Realiza la consulta
-                var entities = await _dbSet.ToListAsync();
-                // Guarda la información en el Log
-                logger.Info("Entidades obtenidas correctamente.");
+                var entities = await _dbSet.ToListAsync();  
                 // Devuelve la lista de entidades
                 return entities;
             }

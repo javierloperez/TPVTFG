@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://nlog-project.org/schemas/NLog.xsd http://nlog-project.org/schemas/NLog.xsd">
+
+	<targets>
+		<target name="logfile" xsi:type="File"
+				fileName="${environment:ALLUSERSPROFILE}\\TVPFarmacia\\Logs\\TPVFarmacia_{shortdate}.log"
+				layout="${longdate} ${level} ${message} ${exception}" />
+	</targets>
+
+	<rules>
+		<logger name="*" minlevel="Info" writeTo="logfile" />
+	</rules>
+</nlog>
+
