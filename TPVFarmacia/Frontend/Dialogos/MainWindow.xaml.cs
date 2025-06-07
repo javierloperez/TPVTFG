@@ -116,11 +116,12 @@ namespace TVPFarmacia.Frontend
             }
         }
 
-        private void btnClose_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
 
+        /// <summary>
+        /// Evento que se ejecuta al pulsar el botón de cerrar sesión, abre la ventana de login y cierra la ventana actual.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cerrarSesion_Click(object sender, RoutedEventArgs e)
         {
             Login login = new Login();
@@ -128,6 +129,11 @@ namespace TVPFarmacia.Frontend
             this.Close();
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al pulsar el botón de calculadora, abre la ventana de calculadora.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Calculadora_Click(object sender, RoutedEventArgs e)
         {
             Calculadora calculadora = new Calculadora();
@@ -135,6 +141,11 @@ namespace TVPFarmacia.Frontend
 
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al pulsar el botón de stock, abre la ventana de stock de productos.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnStock_Click(object sender, RoutedEventArgs e)
         {
             StockProductos stockProductos = new StockProductos(_mvProducto, _mvOfertas, _mvCategoria, this);
@@ -142,18 +153,33 @@ namespace TVPFarmacia.Frontend
 
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al pulsar el botón de clientes, abre la ventana de lista de clientes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnClientes_Click(object sender, RoutedEventArgs e)
         {
             ListaClientes lc = new ListaClientes(_mvClientes);
             lc.ShowDialog();
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al pulsar el botón de ventas, abre la ventana de lista de ventas.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnVentas_Click(object sender, RoutedEventArgs e)
         {
             ListaVentas lv = new ListaVentas(_mvVentas, _mvVentasProducto, _mvProducto);
             lv.ShowDialog();
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al seleccionar el tipo de pago efectivo, muestra los campos necesarios para introducir la cantidad recibida y el total a devolver.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void efectivo_Checked(object sender, RoutedEventArgs e)
         {
             if (sender is RadioButton tipo)
@@ -184,6 +210,11 @@ namespace TVPFarmacia.Frontend
 
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al seleccionar el tipo de pago tarjeta, oculta los campos de cantidad recibida y total a devolver.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cbCliente_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cbCliente.SelectedItem is Cliente cliente)
@@ -193,12 +224,22 @@ namespace TVPFarmacia.Frontend
             }
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al hacer clic en el campo de cantidad recibida, abre una ventana para introducir la cantidad.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cantidadRecibida_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             VentanaCantidad vc = new VentanaCantidad(_contexto, "normal", this);
             vc.ShowDialog();
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al hacer clic en el botón de añadir venta, valida los datos introducidos y añade la venta a la base de datos.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void añadirVenta_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -237,6 +278,9 @@ namespace TVPFarmacia.Frontend
             }
         }
 
+        /// <summary>
+        ///  Método que genera un ticket en formato PDF con los datos de la venta actual, incluyendo productos, cantidades, precios y totales.
+        /// </summary>
         private void GenerarTicket()
         {
             try
@@ -334,12 +378,22 @@ namespace TVPFarmacia.Frontend
             }
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al hacer clic en el campo de porcentaje de IVA, abre una ventana para introducir el porcentaje de IVA.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void porcentajeIva_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             VentanaCantidad vc = new VentanaCantidad(_contexto, "iva", this);
             vc.ShowDialog();
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al cambiar el texto del campo de porcentaje de IVA, actualiza el precio con IVA en función del porcentaje introducido.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void porcentajeIva_TextChanged(object sender, TextChangedEventArgs e)
         {
             try
@@ -352,6 +406,9 @@ namespace TVPFarmacia.Frontend
             }
         }
 
+        /// <summary>
+        /// Método que limpia la ventana principal, reseteando todos los campos y valores a su estado inicial.
+        /// </summary>
         public void LimpiarVentana()
         {
             try
@@ -378,12 +435,22 @@ namespace TVPFarmacia.Frontend
                 _logger.Error(ex, "Error al limpiar la ventana en MainWindow.xaml.cs - LimpiarVentana()");
             }
         }
+
+        /// <summary>
+        /// Evento que se ejecuta al pulsar el botón de añadir cliente, abre la ventana para agregar un nuevo cliente o editar uno existente.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void añadirCliente_Click(object sender, RoutedEventArgs e)
         {
             AgregarCliente ac = new AgregarCliente(_mvClientes, false);
             ac.ShowDialog();
         }
-
+        /// <summary>
+        /// Evento que se ejecuta al hacer clic en el nombre de usuario, abre la ventana para editar los datos del usuario actual.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void nombreUsuario_Click(object sender, RoutedEventArgs e)
         {
             _mvUsuario._crearUsuario = _usuario;

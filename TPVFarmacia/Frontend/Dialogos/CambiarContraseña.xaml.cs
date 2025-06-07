@@ -77,7 +77,7 @@ namespace TVPFarmacia.Frontend.Dialogos
                         {
                             _usuario.Password = txtPass2.Password;
                             await _usuarioServicio.UpdateAsync(_usuario);
-
+                            MessageBox.Show("Contraseña cambiada correctamente");
                             this.Close();
                         }
                     }

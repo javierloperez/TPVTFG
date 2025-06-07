@@ -38,6 +38,13 @@ namespace TVPFarmacia.Frontend
         private string _tipoUso = string.Empty;
         private MainWindow _ventana;
 
+        /// <summary>
+        /// Constructor para la ventana de cantidad, utilizada en la venta normal y para modificar cantidades de productos. También se crean los controles para poder sumar y restar cantidad manteniendo pulsado
+        /// </summary>
+        /// <param name="contexto"></param>
+        /// <param name="sender"></param>
+        /// <param name="mvCategorias"></param>
+        /// <param name="cantidad"></param>
         public VentanaCantidad(TpvbdContext contexto, object sender, MVProducto mvCategorias, int cantidad)
         {
             InitializeComponent();
@@ -70,7 +77,12 @@ namespace TVPFarmacia.Frontend
             btnRestar.PreviewMouseLeftButtonUp += (s, e) => StopHold();
             btnRestar.Click += (s, e) => Decrement();
         }
-
+        /// <summary>
+        /// Constructor auxiliar para usar el iva en la ventana de cantidad, se usa para modificar el porcentaje de iva de un producto. También se crean los controles para poder sumar y restar cantidad manteniendo pulsado
+        /// </summary>
+        /// <param name="contexto"></param>
+        /// <param name="tipo"></param>
+        /// <param name="ventana"></param>
         public VentanaCantidad(TpvbdContext contexto, string tipo, MainWindow ventana)
         {
             InitializeComponent();
@@ -94,23 +106,40 @@ namespace TVPFarmacia.Frontend
             btnRestar.PreviewMouseLeftButtonUp += (s, e) => StopHold();
             btnRestar.Click += (s, e) => Decrement();
         }
+        /// <summary>
+        /// Inicia el temporizador de pulsado para incrementar o decrementar la cantidad según el botón presionado.
+        /// </summary>
+        /// <param name="isIncrement"></param>
         private void StartHold(bool isIncrement)
         {
             _isIncrementing = isIncrement;
             _holdTimer.Start();
         }
 
+        /// <summary>
+        /// Detiene los temporizadores de pulsado y repetición cuando se suelta el botón del ratón.
+        /// </summary>
         private void StopHold()
         {
             _holdTimer.Stop();
             _repeatTimer.Stop();
         }
+        /// <summary>
+        /// Evento que se dispara cuando el temporizador de pulsado se activa. Inicia el temporizador de repetición para incrementar o decrementar la cantidad.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HoldTimer_Tick(object sender, EventArgs e)
         {
             _holdTimer.Stop();
             _repeatTimer.Start();
         }
 
+        /// <summary>
+        /// Evento que se dispara cuando el temporizador de repetición se activa. Incrementa o decrementa la cantidad según el estado del botón.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RepeatTimer_Tick(object sender, EventArgs e)
         {
             if (_isIncrementing)
@@ -122,7 +151,9 @@ namespace TVPFarmacia.Frontend
                 Decrement();
             }
         }
-
+        /// <summary>
+        /// Incrementa la cantidad en 1, siempre que no supere la cantidad máxima permitida.
+        /// </summary>
         private void Increment()
         {
             if (_cantidad < _cantidadMax)
@@ -131,7 +162,9 @@ namespace TVPFarmacia.Frontend
                 txtCantidad.Text = _cantidad.ToString();
             }
         }
-
+        /// <summary>
+        /// Decrementa la cantidad en 1, siempre que no sea menor a 1.
+        /// </summary>
         private void Decrement()
         {
             if (_cantidad > 1)
@@ -140,7 +173,11 @@ namespace TVPFarmacia.Frontend
                 txtCantidad.Text = _cantidad.ToString();
             }
         }
-
+        /// <summary>
+        /// Evento que se dispara al hacer clic en el botón de guardar. Dependiendo del tipo de uso, actualiza la cantidad a devolver, el porcentaje de IVA o añade un ticket a la venta.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
             if (_tipoUso.Equals("normal"))
@@ -157,7 +194,14 @@ namespace TVPFarmacia.Frontend
 
             }
             else if (_tipoUso.Equals("iva")){
-                _ventana.porcentajeIva.Text = ((int)Math.Round(_cantidad)).ToString()+"%";
+                if((int)Math.Round(_cantidad) > 100)
+                {
+                    _ventana.porcentajeIva.Text = "100%";
+                }
+                else
+                {
+                    _ventana.porcentajeIva.Text = ((int)Math.Round(_cantidad)).ToString() + "%";
+                }
             }
             else
             {
@@ -172,7 +216,11 @@ namespace TVPFarmacia.Frontend
             }
             this.Close();
         }
-
+        /// <summary>
+        /// Evento que se dispara al hacer clic en el botón de cancelar.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(_tipoUso))
@@ -182,6 +230,11 @@ namespace TVPFarmacia.Frontend
             this.Close();
         }
 
+        /// <summary>
+        /// Evento que se dispara al obtener el foco en el campo de cantidad. Limpia el campo y muestra el teclado numérico para introducir la cantidad deseada.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void txtCantidad_GotFocus(object sender, RoutedEventArgs e)
         {
             txtCantidad.Text = string.Empty;

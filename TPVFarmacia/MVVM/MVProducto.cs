@@ -36,6 +36,7 @@ namespace TVPFarmacia.MVVM
         private Grid _panelInferior;
         private TextBox _iva;
         private Logger _logger;
+        //Diccionario para crear las filas del ticket
         public Dictionary<int, (Grid fila, TextBlock txtCant, TextBlock txtPrecio)> _lineasTicket = new Dictionary<int, (Grid, TextBlock, TextBlock)>();
 
 
@@ -62,9 +63,14 @@ namespace TVPFarmacia.MVVM
         private Predicate<Producto> criterioCategoria;
 
 
-     
+        /// <summary>
+        /// Propiedad que devuelve una copia del producto actual, para clonar el producto antes de realizar cambios.
+        /// </summary>
         public Producto Clonar { get { return (Producto)_producto.Clone(); } }
 
+        /// <summary>
+        /// Propiedad que guarda el producto actual, se usa para crear un producto.
+        /// </summary>
         public bool guarda
         {
             get
@@ -75,6 +81,9 @@ namespace TVPFarmacia.MVVM
             }
         }
 
+        /// <summary>
+        /// Propiedad que actualiza el producto actual, se usa para actualizar un producto existente.
+        /// </summary>
         public bool actualizar
         {
             get
@@ -85,12 +94,18 @@ namespace TVPFarmacia.MVVM
             }
         }
 
-
+        /// <summary>
+        /// Variable que almacena el producto que se está creando o actualizando, se usa para crear un producto o actualizar uno existente.
+        /// </summary>
         public Producto _crearProducto
         {
             get { return _producto; }
             set { _producto = value; OnPropertyChanged(nameof(_crearProducto)); }
         }
+
+        /// <summary>
+        /// Propiedad que filtra los productos por nombre, se usa para buscar un producto por su nombre.
+        /// </summary>
         public string filtroNombre
         {
             get { return _nombreP; }
@@ -104,7 +119,9 @@ namespace TVPFarmacia.MVVM
                 }
             }
         }
-
+        /// <summary>
+        /// Propiedad que almacena la categoría seleccionada, se usa para filtrar los productos por categoría.
+        /// </summary>
         public Categoria categoriaSeleccionada
         {
             get => _categoriaSeleccionada;
@@ -115,6 +132,19 @@ namespace TVPFarmacia.MVVM
             _contexto = contexto;
         }
 
+        /// <summary>
+        /// Método que inicializa las variables y carga las categorías y productos desde la base de datos.
+        /// </summary>
+        /// <param name="logger">El logger para crear los logs</param>
+        /// <param name="mvOfertas">EL MV de ofertas</param>
+        /// <param name="panelMedio">El panel medio de la ventana principal</param>
+        /// <param name="panelTicket">El panel de ticket de la ventana principal</param>
+        /// <param name="precioTotal">El precioTotal del ticket</param>
+        /// <param name="panelCategorias">El panel de categorías de la ventana principal</param>
+        /// <param name="panelInferior">El panel inferior de la ventan categorías</param>
+        /// <param name="precioConIva">El precio con iva de la ventana principal</param>
+        /// <param name="porcentajeIva">El porcentaje de iva a aplicar</param>
+        /// <returns></returns>
         public async Task Inicializa(Logger logger,MVOfertas mvOfertas, WrapPanel panelMedio, StackPanel panelTicket, TextBlock precioTotal, StackPanel panelCategorias, Grid panelInferior, TextBlock precioConIva, System.Windows.Controls.TextBox porcentajeIva)
         {
             _logger = logger;
@@ -145,6 +175,11 @@ namespace TVPFarmacia.MVVM
             InicializaCriterios();
         }
 
+        /// <summary>
+        /// Método que actualiza el stock de un producto, se usa para actualizar la cantidad de un producto después de una venta.
+        /// </summary>
+        /// <param name="id">Id del producto</param>
+        /// <param name="cantidad">Cantidad del producto</param>
         public void ActualizarStock(int id, int cantidad)
         {
             Producto prod = new Producto();
@@ -163,6 +198,10 @@ namespace TVPFarmacia.MVVM
             _crearProducto = new Producto();
         }
 
+        /// <summary>
+        /// Método que carga las categorías desde la base de datos de forma asíncrona y las muestra en el panel de categorías.
+        /// </summary>
+        /// <returns></returns>
         public async Task CargarCategoriasAsync()
         {
             _listaCategorias = (await _categoriaServicio.GetAllAsync()).ToList();
@@ -171,6 +210,10 @@ namespace TVPFarmacia.MVVM
             await CargarCategoriasAux();
         }
 
+        /// <summary>
+        /// Método que carga las categorías auxiliares desde la base de datos de forma asíncrona y las muestra en el panel de categorías.
+        /// </summary>
+        /// <returns></returns>
         public async Task CargarCategoriasAux()
         {
             _listaCategoriasAux = (await _categoriaServicio.GetAllAsync()).ToList();
@@ -184,6 +227,10 @@ namespace TVPFarmacia.MVVM
             OnPropertyChanged(nameof(_listaCategoriasAux));
         }
 
+        /// <summary>
+        /// Método que recarga la lista de productos desde la base de datos de forma asíncrona y aplica el filtro definido.
+        /// </summary>
+        /// <returns></returns>
         public async Task RecargarListaProductosAsync()
         {
             var productos = await _productoServicio.GetAllAsync();
@@ -197,6 +244,10 @@ namespace TVPFarmacia.MVVM
             OnPropertyChanged(nameof(listaProductosFiltro));
         }
 
+        /// <summary>
+        /// Método que recarga la lista de productos eliminados desde la base de datos de forma asíncrona y aplica el filtro definido.
+        /// </summary>
+        /// <returns></returns>
         public async Task RecargarListaEliminados()
         {
             var productos = await _productoServicio.GetAllAsync();
@@ -210,6 +261,10 @@ namespace TVPFarmacia.MVVM
             OnPropertyChanged(nameof(listaProductosFiltro));
         }
 
+        /// <summary>
+        /// Método que lista las categorías en el panel de categorías, creando botones para cada categoría con su imagen y asignando un evento click para listar los productos de esa categoría.
+        /// </summary>
+        /// <param name="panelCategorias"></param>
         public void ListadoCategorias(StackPanel panelCategorias)
         {
             _panelCategorias.Children.Clear();
@@ -243,6 +298,11 @@ namespace TVPFarmacia.MVVM
 
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al hacer clic en un botón de categoría, filtra los productos por la categoría seleccionada y los lista en el panel medio.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListarProductos_Click(object sender, RoutedEventArgs e)
         {
             string[] iconos = [];
@@ -255,6 +315,11 @@ namespace TVPFarmacia.MVVM
 
         }
 
+        /// <summary>
+        /// Método que lista los productos de una categoría filtrada, creando botones para cada producto con su imagen y asignando un evento click para seleccionar la cantidad del producto.
+        /// </summary>
+        /// <param name="productosFiltrados"></param>
+        /// <param name="iconos"></param>
         private void ListarProductosCategoria(IEnumerable<Producto> productosFiltrados, string[] iconos)
         {
             int i = 0;
@@ -305,6 +370,11 @@ namespace TVPFarmacia.MVVM
             }
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al hacer clic en un botón de producto, abre una ventana para seleccionar la cantidad del producto y añadirlo al ticket.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SeleccionarCantidad(object sender, RoutedEventArgs e)
         {
 
@@ -312,6 +382,12 @@ namespace TVPFarmacia.MVVM
             cantidad.ShowDialog();
         }
 
+        /// <summary>
+        /// Método que añade un ticket al panel de ticket, actualizando la cantidad y el precio del producto si ya existe, o creando una nueva línea si no existe.
+        /// </summary>
+        /// <param name="cantidad"></param>
+        /// <param name="sender"></param>
+        /// <returns></returns>
         public async Task AnyadirTicket(int cantidad, object sender)
         {
             decimal? precioFinal;
@@ -516,11 +592,20 @@ namespace TVPFarmacia.MVVM
 
         }
 
+        /// <summary>
+        /// Método que devuelve el stock temporal de los productos añadidos al ticket, se usa para obtener la cantidad de cada producto en el ticket.
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<int, int> CogerListaTicket()
         {
             return _stockTemporal;
         }
 
+        /// <summary>
+        /// Método que obtiene el precio de un producto por su ID, aplicando el descuento de la oferta si existe.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public decimal CogerPrecioProducto(int id)
         {
             decimal precio = 0;
@@ -531,6 +616,11 @@ namespace TVPFarmacia.MVVM
             return precio;
         }
 
+        /// <summary>
+        /// Método que obtiene el nombre de un producto por su ID, se usa para mostrar el nombre del producto en el ticket.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public string CogerNombreProducto(int id)
         {
 
@@ -540,6 +630,10 @@ namespace TVPFarmacia.MVVM
             return prod.Descripcion;
         }
 
+        /// <summary>
+        /// Método que cambia el tipo de lista a mostrar, ya sea la lista de productos activos o la lista de productos eliminados.
+        /// </summary>
+        /// <param name="tipo"></param>
         public async void CambiarTipoLista(string tipo)
         {
             if (tipo.Equals("Eliminados"))
@@ -551,6 +645,13 @@ namespace TVPFarmacia.MVVM
                 await RecargarListaProductosAsync();
             }
         }
+
+        /// <summary>
+        /// Método que obtiene el stock disponible de un producto, restando el stock temporal del stock original del producto.
+        /// </summary>
+        /// <param name="idProducto"></param>
+        /// <param name="stockOriginal"></param>
+        /// <returns></returns>
         public int ObtenerStockDisponible(int idProducto, int stockOriginal)
         {
             if (_stockTemporal.ContainsKey(idProducto))
@@ -558,11 +659,21 @@ namespace TVPFarmacia.MVVM
 
             return stockOriginal;
         }
+
+        /// <summary>
+        /// Método que limpia el stock temporal, se usa para reiniciar el ticket después de una venta o al finalizar la sesión.
+        /// </summary>
         public void LimpiarStock()
         {
             _stockTemporal.Clear();
             _precioFinal = 0;
         }
+
+        /// <summary>
+        /// Método que registra un stock temporal de un producto, se usa para añadir productos al ticket antes de confirmar la venta.
+        /// </summary>
+        /// <param name="idProducto"></param>
+        /// <param name="cantidad"></param>
         public void RegistrarStockTemporal(int idProducto, int cantidad)
         {
             if (_stockTemporal.ContainsKey(idProducto))
@@ -571,6 +682,10 @@ namespace TVPFarmacia.MVVM
                 _stockTemporal[idProducto] = cantidad;
         }
 
+        /// <summary>
+        /// Método que modifica el total del ticket, actualizando el precio total y el precio con IVA, se usa para actualizar el total después de añadir o eliminar productos del ticket.
+        /// </summary>
+        /// <param name="precio"></param>
         private void ModificarTotal(decimal? precio)
         {
             try
@@ -587,6 +702,9 @@ namespace TVPFarmacia.MVVM
             }
         }
 
+        /// <summary>
+        /// Método que añade los criterios de búsqueda para filtrar los productos, se usa para aplicar los filtros de nombre y categoría al buscar productos
+        /// </summary>
         private void AddCriterios()
         {
             criterios.Clear();
@@ -608,6 +726,10 @@ namespace TVPFarmacia.MVVM
             }
 
         }
+
+        /// <summary>
+        /// Método que inicializa los criterios de búsqueda
+        /// </summary>
         private void InicializaCriterios()
         {
             criterioBusqueda = new Predicate<Producto>(m => !string.IsNullOrEmpty(m.Descripcion) && m.Descripcion.ToLower().StartsWith(filtroNombre.ToLower()));
@@ -615,12 +737,20 @@ namespace TVPFarmacia.MVVM
 
         }
 
+        /// <summary>
+        /// Método que filtra los productos según los criterios establecidos
+        /// </summary>
         public void Filtrar()
         {
             AddCriterios();
             listaProductosFiltro.Filter = predicadoFiltro;
         }
 
+        /// <summary>
+        /// Método que aplica los criterios de filtro a un producto
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         private bool FiltroCriterios(object item)
         {
             bool correcto = true;

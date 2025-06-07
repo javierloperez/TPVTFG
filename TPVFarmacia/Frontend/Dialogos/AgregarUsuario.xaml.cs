@@ -39,7 +39,11 @@ namespace TPVFarmacia.Frontend.Dialogos
             DataContext = _mvUsuario;
             _mvUsuario.btnGuardar = btnGuardar;
         }
-
+        /// <summary>
+        /// Evento que se ejecuta al pulsar el botón de guardar, valida los campos del formulario y guarda el usuario si es válido.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
             if (_mvUsuario.IsValid(this))
@@ -65,12 +69,21 @@ namespace TPVFarmacia.Frontend.Dialogos
             }
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al pulsar el botón de cancelar, limpia el objeto usuario y cierra la ventana.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
             _mvUsuario._crearUsuario = new Usuario();
             this.Close();
         }
-
+        /// <summary>
+        /// Evento que se ejecuta al introducir texto en el campo de teléfono, permite solo la entrada de dígitos.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tbTelefono_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = e.Text.ToString().All(char.IsDigit) == false;

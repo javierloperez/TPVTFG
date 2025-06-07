@@ -187,6 +187,11 @@ namespace TVPFarmacia.Frontend.ControlUser
             _mvProducto.Filtrar();
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al cargar una fila en el DataGrid de productos, para personalizar el botón de borrar según el tipo de lista (activos o eliminados).
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dgAñadirProducto_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             Dispatcher.InvokeAsync(() =>
@@ -213,7 +218,13 @@ namespace TVPFarmacia.Frontend.ControlUser
             }, DispatcherPriority.Background);
         }
 
-
+        /// <summary>
+        /// Método genérico para encontrar un hijo en el árbol visual por su nombre.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parent"></param>
+        /// <param name="childName"></param>
+        /// <returns></returns>
         public static T FindChildByName<T>(DependencyObject parent, string childName) where T : DependencyObject
         {
             if (parent == null) return null;
@@ -233,6 +244,11 @@ namespace TVPFarmacia.Frontend.ControlUser
             return null;
         }
 
+        /// <summary>
+        /// Evento que se ejecuta al hacer clic en el botón para alternar entre ver productos eliminados o activos.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void verEliminados_Click(object sender, RoutedEventArgs e)
         {
 

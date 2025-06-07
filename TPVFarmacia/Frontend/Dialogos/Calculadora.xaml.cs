@@ -21,19 +21,16 @@ namespace TVPFarmacia.Frontend
     /// </summary>
     public partial class Calculadora : MetroWindow
     {
-        /// <summary>
-        /// Declaración de variables
-        /// </summary>
+        
         private string input = "";// Cadena que almacena la entrada de numeros
         private bool borrar = false; // Indica si se debe borrar la entrada al siguiente número
         private bool isIcono = false; // Indica si el último botón presionado es un icono
-        /// <summary>
-        /// Constructor de la clase Calculadora.
-        /// </summary>
+      
         public Calculadora()
         {
             InitializeComponent();
         }
+
         /// <summary>
         /// Manejador de eventos para el clic en los botones de la calculadora, comprueba el tipo de icono y añade al input el símbolo de operación correspondiente.
         /// </summary>

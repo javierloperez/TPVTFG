@@ -58,9 +58,9 @@ namespace TVPFarmacia.Frontend.Dialogos
                 if (_mvCategorias.guarda)
                 {
                     await this.ShowMessageAsync("Gestión crear categoria", "La categoria se ha guardado correctamente");
-                    DialogResult = true;
                     _mvCategorias._crearCategoria = new Categoria();
                     await _mvProductos.CargarCategoriasAsync();
+                    DialogResult = true;
 
                 }
                 else

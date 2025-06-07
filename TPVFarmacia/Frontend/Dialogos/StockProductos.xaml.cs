@@ -24,6 +24,11 @@ namespace TVPFarmacia
             _mvProducto = mv;
         }
 
+        /// <summary>
+        /// Evento que se dispara al cerrar la ventana. Se utiliza para recargar la lista de productos en el MVProducto. Uso para manejar el cambio de las listas activos y eliminados
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void Ventana_Closing(object sender, CancelEventArgs e)
         {
             await _mvProducto.RecargarListaProductosAsync();

@@ -18,11 +18,20 @@ namespace TVPFarmacia.MVVM
         private VentaProducto _venta;
         private VentaProductoServicio _ventaServicio;
         private Logger _logger;
-
         public IEnumerable<VentaProducto> _listaVentas { get { return Task.Run(_ventaServicio.GetAllAsync).Result; } }
-        public bool guarda { get { return Task.Run(() => Add(_crearVentaP)).Result; } }
 
+        /// <summary>
+        /// Propiedad que guarda una venta de producto en la base de datos. 
+        /// </summary>
+        public bool guarda { get { return Task.Run(() => Add(_crearVentaP)).Result; } }
+        /// <summary>
+        /// Propiedad que indica si se va a borrar una venta de producto.
+        /// </summary>
         public bool borrar;
+
+        /// <summary>
+        /// Variable que recoge los datos para crear una ventaProductos o actualizarla
+        /// </summary>
         public VentaProducto _crearVentaP
         {
             get { return _venta; }
@@ -35,6 +44,10 @@ namespace TVPFarmacia.MVVM
             _contexto = contexto;
         }
 
+        /// <summary>
+        /// Método que borra una venta de productos de la base de datos a partir del ID de la venta.
+        /// </summary>
+        /// <param name="ids"></param>
         public void BorrarVentasID(int ids)
         {
             foreach (var ventaProducto in _listaVentas)
@@ -46,6 +59,11 @@ namespace TVPFarmacia.MVVM
             }
         }
 
+        /// <summary>
+        /// Método que inicializa el MVVentasProducto con un logger y un contexto de base de datos.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <returns></returns>
         public async Task Inicializa(Logger logger)
         {
             _logger = logger;
@@ -56,6 +74,13 @@ namespace TVPFarmacia.MVVM
 
         }
 
+        /// <summary>
+        /// Método que inserta una venta de producto en la base de datos.
+        /// </summary>
+        /// <param name="idProd">ID del producto</param>
+        /// <param name="cantidad">Cantidad del producto</param>
+        /// <param name="precio">Precio de los productos</param>
+        /// <param name="idVenta">ID de la venta</param>
         public void InsertarVenta(int idProd, int cantidad, decimal precio, int idVenta)
         {
 

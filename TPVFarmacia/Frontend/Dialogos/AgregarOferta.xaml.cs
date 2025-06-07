@@ -41,8 +41,8 @@ namespace TVPFarmacia.Frontend.Dialogos
             _mvOfertas = mv;
             DataContext = _mvOfertas;
             _mvOfertas.btnGuardar = btnGuardar;
-            dpFechaFin.SelectedDate = DateTime.UtcNow;
-            dpFechaInicio.SelectedDate = DateTime.UtcNow;
+            _mvOfertas._crearOferta.OfertaFin = DateTime.UtcNow;
+            _mvOfertas._crearOferta.OfertaInicio = DateTime.UtcNow;
 
         }
 
@@ -68,6 +68,10 @@ namespace TVPFarmacia.Frontend.Dialogos
             {
                 MessageBox.Show("El descuento no puede ser 0", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }else if (_mvOfertas._crearOferta.DescuentoPctj > 100)
+            {
+                MessageBox.Show("El descuento no puede ser mayor de 100", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
             if (_mvOfertas.IsValid(this))
@@ -75,19 +79,21 @@ namespace TVPFarmacia.Frontend.Dialogos
 
                 if (_mvOfertas.guarda)
                 {
-                    await this.ShowMessageAsync("Gestión crear oferta", "La oferta se ha guardado correctamente");
+                    MessageBox.Show("Gestión crear oferta", "La oferta se ha guardado correctamente", MessageBoxButton.OK, MessageBoxImage.Information);
                     DialogResult = true;
                     _mvOfertas._crearOferta = new Oferta();
+                    dpFechaFin.SelectedDate = DateTime.UtcNow;
+                    dpFechaInicio.SelectedDate = DateTime.UtcNow;
 
                 }
                 else
                 {
-                    await this.ShowMessageAsync("Gestión crear oferta", "Error, algun campo esta incompleto o no es válido");
+                    MessageBox.Show("Gestión crear oferta", "Error, algun campo esta incompleto o no es válido",MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
             {
-                this.ShowMessageAsync("Gestión crear oferta", "Tienes campos obligatorios sin rellenar correctamente");
+                MessageBox.Show("Gestión crear oferta", "Tienes campos obligatorios sin rellenar correctamente", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         /// <summary>

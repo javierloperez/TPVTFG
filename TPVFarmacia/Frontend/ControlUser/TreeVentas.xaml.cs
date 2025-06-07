@@ -43,7 +43,11 @@ namespace TVPFarmacia.Frontend.ControlUser
             _mvVentasProducto = mvVentasProducto;
             DataContext = _mvVentas;
         }
-
+        /// <summary>
+        /// Evento que se ejecuta al pulsar sobre un objeto del árbol de ventas.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void treeVentas_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (treeVentas.SelectedItem != null && treeVentas.SelectedItem is Venta)
@@ -66,6 +70,12 @@ namespace TVPFarmacia.Frontend.ControlUser
                 
             }
         }
+
+        /// <summary>
+        /// Evento que se ejecuta al pulsar el botón de eliminar venta.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void EliminarVenta_Click(object sender, RoutedEventArgs e)
         {
             if (treeVentas.SelectedItem is Venta ventaSeleccionada)

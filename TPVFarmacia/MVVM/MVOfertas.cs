@@ -21,19 +21,27 @@ namespace TVPFarmacia.MVVM.Base
         private Oferta _oferta;
         private OfertaServicio _ofertaServicio;
         private Logger _logger;
+        public List<Oferta> _listaOfertas { get; set; } = new List<Oferta>();
 
         public MVOfertas(TpvbdContext contexto)
         {
             _contexto = contexto;
         }
-
-        public List<Oferta> _listaOfertas { get; set; } = new List<Oferta>();
+        /// <summary>
+        /// Método para cargar las ofertas desde la base de datos de forma asíncrona.
+        /// </summary>
+        /// <returns></returns>
         public async Task CargarOfertasAsync()
         {
             _listaOfertas = (await _ofertaServicio.GetAllAsync()).ToList();
             OnPropertyChanged(nameof(_listaOfertas));
         }
 
+        /// <summary>
+        /// Método que inicializa las variables, determina las fechas de las ofertas  y carga las ofertas desde la base de datos.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <returns></returns>
         public async Task Inicializa(Logger logger)
         {
             _oferta = new Oferta();
@@ -46,15 +54,25 @@ namespace TVPFarmacia.MVVM.Base
 
         }
 
-
+        /// <summary>
+        /// Variable que recoge los datos para crear una oferta o actualizarla
+        /// </summary>
         public Oferta _crearOferta
         {
             get { return _oferta; }
             set { _oferta = value; OnPropertyChanged(nameof(_crearOferta)); }
         }
 
+        /// <summary>
+        /// Método que guarda la oferta en la base de datos.
+        /// </summary>
         public bool guarda { get { return Task.Run(() => Add(_crearOferta)).Result; } }
 
+        /// <summary>
+        /// Método que comprueba si una oferta es válida y está activa, devolviendo el porcentaje de descuento si es así, o 0 si no lo es.
+        /// </summary>
+        /// <param name="idOferta"></param>
+        /// <returns></returns>
         public int ComprobarOfertas(int idOferta)
         {
             try

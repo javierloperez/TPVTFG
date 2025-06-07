@@ -16,10 +16,16 @@ namespace TVPFarmacia.MVVM
         TpvbdContext _contexto;
         Categoria _categoria;
         CategoriaServicio _categoriaServicio;
-     
+
+        /// <summary>
+        /// Método que guarda una categoría en la base de datos.
+        ///<returns> Devuelve true o false en función de si se ha guardado o no</returns> 
+        /// </summary>
         public bool guarda { get { return Task.Run(() => Add(_crearCategoria)).Result; } }
 
-
+        /// <summary>
+        /// Variable que recoge los datos para crear una categoría o actualizarla
+        /// </summary>
         public Categoria _crearCategoria
         {
             get { return _categoria; }
@@ -31,7 +37,10 @@ namespace TVPFarmacia.MVVM
         {
             _contexto = contexto;
         }
-
+        /// <summary>
+        /// Método que inicializa las variables y el servicio.
+        /// </summary>
+        /// <returns></returns>
         public async Task Inicializa()
         {
             _categoria = new Categoria();
